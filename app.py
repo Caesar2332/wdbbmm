@@ -5,17 +5,17 @@ import time
 
 # --- КОНФИГУРАЦИЯ ---
 # В реальном проекте используйте st.secrets для ключей!
-# Создайте файл .streamlit/secrets.toml с содержимым:
-# [supabase]
-# url = "ВАШ_SUPABASE_URL"
-# key = "ВАШ_SUPABASE_ANON_KEY"
-# wedding_code = "2026"
+# .streamlit/secrets.toml
 
-SUPABASE_URL = st.secrets["supabase"]["url"]
-SUPABASE_KEY = st.secrets["supabase"]["key"]
-WEDDING_CODE = st.secrets["supabase"]["wedding_code"] # Простой код для верификации гостей
+try:
+    SUPABASE_URL = st.secrets["supabase"]["url"]
+    SUPABASE_KEY = st.secrets["supabase"]["key"]
+    WEDDING_CODE = st.secrets["supabase"]["wedding_code"]
+except:
+    st.error("Не настроены секреты в .streamlit/secrets.toml")
+    st.stop()
 
-
+# --- КАРТА И ИЗОБРАЖЕНИЯ (Оставляем как было) ---
 # Parameters
 lat, lon = 42.923482 , 71.419786
 zoom = 18
@@ -26,21 +26,21 @@ static_url = f"https://static.maps.2gis.com/1.0?center={lon},{lat}&zoom={zoom}&s
 
 st.image(static_url, caption="Расположение места проведения свадьбы")
 
-st.link_button("Открыть в 2GIS", url=f"https://2gis.kz/taraz/firm/70000001100842703?m=71.419786%2C42.923482%2F18", type="primary", use_container_width=True)    
+st.link_button("Открыть в 2GIS", url=f"https://2gis.kz/taraz/firm/70000001100842703?m=71.419786%2C42.923482%2F18", type="primary", use_container_width=True)
 
 # Инициализация клиента
 @st.cache_resource
 def init_connection():
     return create_client(SUPABASE_URL, SUPABASE_KEY,
         options=ClientOptions(
-            postgrest_client_timeout=60, # Ждать ответа базы до 60 секунд
+            postgrest_client_timeout=60,
             storage_client_timeout=60,
             schema="public",
         ))
 
 supabase: Client = init_connection()
 
-# --- CSS СТИЛИЗАЦИЯ (СВАДЕБНАЯ ТЕМА) ---
+# --- CSS СТИЛИЗАЦИЯ ---
 def local_css():
     st.markdown("""
     <style>
@@ -80,9 +80,7 @@ def local_css():
 # --- ФУНКЦИИ АУТЕНТИФИКАЦИИ ---
 
 def sign_up(email, password, name):
-    # try:
-        # Мы передаем 'data': {'full_name': name}
-        # Supabase сохранит это в raw_user_meta_data, а наш SQL триггер заберет оттуда
+    try:
         res = supabase.auth.sign_up({
             "email": email, 
             "password": password,
@@ -91,18 +89,16 @@ def sign_up(email, password, name):
             }
         })
         
-        # Проверяем, создался ли пользователь
         if res.user:
             return True, "Регистрация успешна! Теперь войдите."
         
-        # Если включено подтверждение email, user может быть создан, но сессии нет
         if res.user and res.user.identities and len(res.user.identities) == 0:
              return False, "Пользователь уже существует или требует подтверждения почты."
 
-    # except Exception as e:
-    #     return False, f"Ошибка: {str(e)}"
+    except Exception as e:
+        return False, f"Ошибка: {str(e)}"
     
-    # return False, "Неизвестная ошибка"
+    return False, "Неизвестная ошибка"
 
 def sign_in(email, password):
     try:
@@ -114,6 +110,31 @@ def sign_in(email, password):
     except Exception as e:
         st.error(f"Ошибка входа: {str(e)}")
     return False
+
+# --- НОВЫЕ ФУНКЦИИ ДЛЯ ВОССТАНОВЛЕНИЯ ПАРОЛЯ ---
+def send_otp(email):
+    try:
+        # Отправляет Magic Link (с кодом внутри)
+        supabase.auth.sign_in_with_otp({"email": email})
+        return True, "Код отправлен на почту!"
+    except Exception as e:
+        return False, f"Ошибка отправки: {e}"
+
+def verify_otp_login(email, token):
+    try:
+        # Проверка кода (тип email/magiclink)
+        res = supabase.auth.verify_otp({
+            "email": email, 
+            "token": token, 
+            "type": "email"
+        })
+        if res.user:
+            st.session_state['user'] = res.user
+            st.session_state['session'] = res.session
+            return True, "Успешный вход!"
+    except Exception as e:
+        return False, f"Неверный код или ошибка: {e}"
+    return False, "Не удалось проверить код"
 
 def update_rsvp(status, food):
     user_id = st.session_state['user'].id
@@ -150,7 +171,8 @@ def main():
 
     # Если пользователь НЕ авторизован
     if st.session_state['user'] is None:
-        tab1, tab2 = st.tabs(["Войти", "Регистрация"])
+        # ДОБАВЛЕНА ТРЕТЬЯ ВКЛАДКА
+        tab1, tab2, tab3 = st.tabs(["Войти", "Регистрация", "Забыли пароль?"])
 
         with tab1:
             email_in = st.text_input("Email", key="login_email")
@@ -175,6 +197,48 @@ def main():
                         st.error(msg)
                 else:
                     st.error("Неверный секретный код свадьбы!")
+        
+        # ЛОГИКА ВОССТАНОВЛЕНИЯ ПАРОЛЯ
+        with tab3:
+            st.write("Введите ваш Email. Мы отправим вам временный код для входа.")
+            otp_email = st.text_input("Email для восстановления", key="otp_email")
+            
+            # Состояние: отправлен код или нет
+            if 'otp_sent' not in st.session_state:
+                st.session_state['otp_sent'] = False
+
+            if not st.session_state['otp_sent']:
+                if st.button("Отправить код"):
+                    if otp_email:
+                        success, msg = send_otp(otp_email)
+                        if success:
+                            st.session_state['otp_sent'] = True
+                            st.success(msg)
+                            time.sleep(1)
+                            st.rerun()
+                        else:
+                            st.error(msg)
+                    else:
+                        st.error("Введите Email")
+            else:
+                st.info(f"Код отправлен на {otp_email}. Проверьте почту (и спам).")
+                otp_code = st.text_input("6-значный код из письма", key="otp_code")
+                
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button("Войти по коду"):
+                        success, msg = verify_otp_login(otp_email, otp_code)
+                        if success:
+                            st.success("Вход выполнен! Теперь вы можете сменить пароль в Настройках.")
+                            st.session_state['otp_sent'] = False
+                            time.sleep(1)
+                            st.rerun()
+                        else:
+                            st.error(msg)
+                with col2:
+                    if st.button("Назад / Другой Email"):
+                        st.session_state['otp_sent'] = False
+                        st.rerun()
 
     # Если пользователь АВТОРИЗОВАН
     else:
@@ -210,7 +274,6 @@ def main():
             current_food = guest_info.get('food_preference', '')
 
             status_options = ['Я приду', 'Не смогу', 'Думаю']
-            # Находим индекс для selectbox
             try:
                 index_status = status_options.index(current_status)
             except:
@@ -221,13 +284,13 @@ def main():
 
             if st.button("Сохранить ответ"):
                 update_rsvp(new_status, new_food)
-                time.sleep(1) # Даем время увидеть сообщение
+                time.sleep(1)
                 st.rerun()
 
         with menu_tab3:
             st.write("Управление аккаунтом")
             
-            with st.expander("Сменить пароль"):
+            with st.expander("Сменить пароль", expanded=True): # Развернуто, если зашли через восстановление
                 st.write("Введите новый пароль ниже:")
                 new_p = st.text_input("Новый пароль", type="password", key="new_p")
                 conf_p = st.text_input("Подтвердите пароль", type="password", key="conf_p")
