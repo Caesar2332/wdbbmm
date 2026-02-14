@@ -2,11 +2,9 @@ import streamlit as st
 from supabase import ClientOptions, create_client, Client
 import streamlit.components.v1 as components
 import time
+from datetime import datetime
 
 # --- КОНФИГУРАЦИЯ ---
-# В реальном проекте используйте st.secrets для ключей!
-# .streamlit/secrets.toml
-
 try:
     SUPABASE_URL = st.secrets["supabase"]["url"]
     SUPABASE_KEY = st.secrets["supabase"]["key"]
@@ -14,19 +12,6 @@ try:
 except:
     st.error("Не настроены секреты в .streamlit/secrets.toml")
     st.stop()
-
-# --- КАРТА И ИЗОБРАЖЕНИЯ (Оставляем как было) ---
-# Parameters
-lat, lon = 42.923482 , 71.419786
-zoom = 18
-size = "600,450"
-
-# Construct the URL
-static_url = f"https://static.maps.2gis.com/1.0?center={lon},{lat}&zoom={zoom}&size={size}"
-
-st.image(static_url, caption="Расположение места проведения свадьбы")
-
-st.link_button("Открыть в 2GIS", url=f"https://2gis.kz/taraz/firm/70000001100842703?m=71.419786%2C42.923482%2F18", type="primary", use_container_width=True)
 
 # Инициализация клиента
 @st.cache_resource
@@ -40,65 +25,119 @@ def init_connection():
 
 supabase: Client = init_connection()
 
-# --- CSS СТИЛИЗАЦИЯ ---
+# --- НОВЫЙ ДИЗАЙН (CSS) ---
 def local_css():
     st.markdown("""
     <style>
-    .main {
-        background-color: #fdfbf7;
-        color: #4a4a4a;
+    /* 1. Подключение шрифтов Google */
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Great+Vibes&family=Montserrat:wght@300;400&display=swap');
+
+    /* 2. Основной фон приложения (Бежевый/Кремовый) */
+    .stApp {
+        background-color: #F7F5F0;
+        background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png"); /* Текстура бумаги */
     }
+
+    /* 3. Типографика */
     h1 {
-        font-family: 'Garamond', serif;
-        color: #bfa05f;
+        font-family: 'Great Vibes', cursive !important; /* Шрифт для имен */
+        color: #8B7E66 !important; /* Золотисто-коричневый */
+        font-size: 3.5rem !important;
+        font-weight: 400 !important;
         text-align: center;
-        padding-bottom: 20px;
+        padding-bottom: 0px;
+        line-height: 1.2;
     }
+
     h2, h3 {
-        font-family: 'Garamond', serif;
-        color: #8c7b50;
+        font-family: 'Cormorant Garamond', serif !important;
+        color: #5E503F !important; /* Темно-коричневый */
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 2px;
     }
+
+    p, div, label, span {
+        font-family: 'Montserrat', sans-serif;
+        color: #5E503F;
+    }
+
+    /* 4. Стилизация кнопок */
     .stButton>button {
-        background-color: #bfa05f;
+        background-color: #8B7E66;
         color: white;
-        border-radius: 10px;
-        border: none;
+        border-radius: 30px; /* Закругленные кнопки */
+        border: 1px solid #8B7E66;
+        font-family: 'Cormorant Garamond', serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 10px 25px;
+        transition: all 0.3s ease;
     }
     .stButton>button:hover {
-        background-color: #a3864d;
+        background-color: #5E503F;
+        border-color: #5E503F;
+        color: #FFF;
     }
-    .success-box {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        background-color: #d4edda;
-        color: #155724;
-        margin-bottom: 1rem;
+
+    /* 5. Поля ввода */
+    .stTextInput>div>div>input {
+        background-color: rgba(255, 255, 255, 0.6);
+        border: 1px solid #D6CFC7;
+        border-radius: 10px;
+        color: #5E503F;
     }
+
+    /* 6. Карточки/Табы */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 10px;
+        justify-content: center;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: transparent;
+        border-radius: 20px;
+        color: #8B7E66;
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: white !important;
+        color: #5E503F !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    /* 7. Декоративные элементы */
+    .divider-img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 150px;
+        opacity: 0.8;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .intro-image {
+        width: 200px;
+        display: block;
+        margin: 0 auto 20px auto;
+    }
+
     </style>
     """, unsafe_allow_html=True)
 
-# --- ФУНКЦИИ АУТЕНТИФИКАЦИИ ---
+# --- ЛОГИКА АУТЕНТИФИКАЦИИ (БЕЗ ИЗМЕНЕНИЙ) ---
 
 def sign_up(email, password, name):
     try:
         res = supabase.auth.sign_up({
-            "email": email, 
-            "password": password,
-            "options": {
-                "data": {"full_name": name}
-            }
+            "email": email, "password": password,
+            "options": {"data": {"full_name": name}}
         })
-        
-        if res.user:
-            return True, "Регистрация успешна! Теперь войдите."
-        
-        if res.user and res.user.identities and len(res.user.identities) == 0:
-             return False, "Пользователь уже существует или требует подтверждения почты."
-
-    except Exception as e:
-        return False, f"Ошибка: {str(e)}"
-    
-    return False, "Неизвестная ошибка"
+        if res.user: return True, "Регистрация успешна!"
+        if res.user and not res.user.identities: return False, "Пользователь уже существует."
+    except Exception as e: return False, str(e)
+    return False, "Ошибка"
 
 def sign_in(email, password):
     try:
@@ -107,201 +146,180 @@ def sign_in(email, password):
             st.session_state['user'] = res.user
             st.session_state['session'] = res.session
             return True
-    except Exception as e:
-        st.error(f"Ошибка входа: {str(e)}")
+    except Exception as e: st.error(f"Ошибка: {e}")
     return False
 
-# --- НОВЫЕ ФУНКЦИИ ДЛЯ ВОССТАНОВЛЕНИЯ ПАРОЛЯ ---
 def send_otp(email):
     try:
-        # Отправляет Magic Link (с кодом внутри)
         supabase.auth.sign_in_with_otp({"email": email})
-        return True, "Код отправлен на почту!"
-    except Exception as e:
-        return False, f"Ошибка отправки: {e}"
+        return True, "Код отправлен!"
+    except Exception as e: return False, str(e)
 
 def verify_otp_login(email, token):
     try:
-        # Проверка кода (тип email/magiclink)
-        res = supabase.auth.verify_otp({
-            "email": email, 
-            "token": token, 
-            "type": "email"
-        })
+        res = supabase.auth.verify_otp({"email": email, "token": token, "type": "email"})
         if res.user:
             st.session_state['user'] = res.user
             st.session_state['session'] = res.session
-            return True, "Успешный вход!"
-    except Exception as e:
-        return False, f"Неверный код или ошибка: {e}"
-    return False, "Не удалось проверить код"
+            return True, "Успех!"
+    except Exception as e: return False, str(e)
+    return False, "Ошибка"
 
 def update_rsvp(status, food):
-    user_id = st.session_state['user'].id
     try:
-        supabase.table("guests").update({
-            "attendance_status": status,
-            "food_preference": food
-        }).eq("id", user_id).execute()
-        st.success("Ваш ответ сохранен!")
-    except Exception as e:
-        st.error(f"Ошибка сохранения: {e}")
+        supabase.table("guests").update({"attendance_status": status, "food_preference": food}).eq("id", st.session_state['user'].id).execute()
+        st.success("Ответ сохранен!")
+    except Exception as e: st.error(f"Ошибка: {e}")
 
 def change_password(new_password):
     try:
         supabase.auth.update_user({"password": new_password})
-        st.success("Пароль успешно изменен!")
-    except Exception as e:
-        st.error(f"Ошибка смены пароля: {e}")
+        st.success("Пароль изменен!")
+    except Exception as e: st.error(f"Ошибка: {e}")
 
-# --- ИНТЕРФЕЙС ---
+# --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ИНТЕРФЕЙСА ---
+
+def display_countdown():
+    # Дата свадьбы: 8 Августа 2026, 17:00
+    wedding_date = datetime(2026, 8, 8, 17, 0, 0)
+    now = datetime.now()
+    delta = wedding_date - now
+    
+    if delta.days > 0:
+        days = delta.days
+        hours = delta.seconds // 3600
+        minutes = (delta.seconds // 60) % 60
+        
+        st.markdown(f"""
+        <div style="display: flex; justify-content: center; gap: 20px; margin: 30px 0; color: #5E503F;">
+            <div style="text-align: center;">
+                <span style="font-size: 2rem; font-family: 'Cormorant Garamond'; font-weight: bold;">{days}</span><br>
+                <span style="font-size: 0.8rem; text-transform: uppercase;">Дней</span>
+            </div>
+            <div style="text-align: center;">
+                <span style="font-size: 2rem; font-family: 'Cormorant Garamond'; font-weight: bold;">{hours}</span><br>
+                <span style="font-size: 0.8rem; text-transform: uppercase;">Часов</span>
+            </div>
+             <div style="text-align: center;">
+                <span style="font-size: 2rem; font-family: 'Cormorant Garamond'; font-weight: bold;">{minutes}</span><br>
+                <span style="font-size: 0.8rem; text-transform: uppercase;">Минут</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# --- MAIN APP ---
 
 def main():
-    st.set_page_config(page_title="Свадьба Малики & Бейбарыса", page_icon="💍")
+    st.set_page_config(page_title="Малика & Бейбарыс", page_icon="🤍")
     local_css()
 
-    st.title("💍 Малика & Бейбарыс 💍")
-    st.markdown("<h3 style='text-align: center;'>Приглашаем вас на нашу свадьбу!</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center;'>8 Августа 2026 года • Тараз</p>", unsafe_allow_html=True)
-    st.divider()
+    # --- ЗАГОЛОВОК (Header) ---
+    # Бисмилля (картинка)
+    st.markdown('<img src="https://www.brides.com/thmb/fJSfAbT8DxJs4dW79wcWZEQZgJs=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/must-take-wedding-photos-bride-groom-walk-clary-prfeiffer-photography-0723-primary-b4221bcb1a2b43e6b0820a8c3e3bce52.jpg" class="intro-image">', unsafe_allow_html=True)
+    
+    st.markdown("<h3>Приглашаем на свадьбу</h3>", unsafe_allow_html=True)
+    st.title("Малика & Бейбарыс")
+    
+    # Дата и Декоративная линия
+    st.markdown("<p style='text-align: center; font-size: 1.2rem; letter-spacing: 3px;'>08 | 08 | 2026</p>", unsafe_allow_html=True)
+    st.markdown('<img src="https://designer.kz/wp-content/uploads/2023/05/IMG_2415w.jpg" class="divider-img">', unsafe_allow_html=True)
+
+    # --- ТАЙМЕР ---
+    display_countdown()
 
     # Проверка сессии
-    if 'user' not in st.session_state:
-        st.session_state['user'] = None
+    if 'user' not in st.session_state: st.session_state['user'] = None
 
-    # Если пользователь НЕ авторизован
+    # --- КОНТЕЙНЕР АВТОРИЗАЦИИ / КОНТЕНТА ---
+    
     if st.session_state['user'] is None:
-        # ДОБАВЛЕНА ТРЕТЬЯ ВКЛАДКА
-        tab1, tab2, tab3 = st.tabs(["Войти", "Регистрация", "Забыли пароль?"])
+        st.markdown("<div style='background-color: rgba(255,255,255,0.7); padding: 30px; border-radius: 15px; margin-top: 20px;'>", unsafe_allow_html=True)
+        st.markdown("<h3 style='margin-bottom: 20px;'>Вход для гостей</h3>", unsafe_allow_html=True)
+        
+        tab1, tab2, tab3 = st.tabs(["Войти", "Регистрация", "Код?"])
 
         with tab1:
-            email_in = st.text_input("Email", key="login_email")
-            pass_in = st.text_input("Пароль", type="password", key="login_pass")
-            if st.button("Войти"):
-                if sign_in(email_in, pass_in):
-                    st.rerun()
+            email = st.text_input("Email", key="l_email")
+            pwd = st.text_input("Пароль", type="password", key="l_pass")
+            if st.button("Войти", use_container_width=True):
+                if sign_in(email, pwd): st.rerun()
 
         with tab2:
-            st.info("Чтобы зарегистрироваться, введите код с пригласительного.")
-            reg_name = st.text_input("Ваше Имя и Фамилия")
-            reg_email = st.text_input("Email", key="reg_email")
-            reg_pass = st.text_input("Придумайте пароль", type="password", key="reg_pass")
-            reg_code = st.text_input("Секретный код свадьбы", type="password")
+            st.caption("Введите код с приглашения")
+            r_name = st.text_input("Имя и Фамилия")
+            r_email = st.text_input("Email", key="r_email")
+            r_pass = st.text_input("Пароль", type="password", key="r_pass")
+            r_code = st.text_input("Код свадьбы", type="password")
+            if st.button("Создать аккаунт", use_container_width=True):
+                if r_code == WEDDING_CODE:
+                    ok, msg = sign_up(r_email, r_pass, r_name)
+                    if ok: st.success(msg)
+                    else: st.error(msg)
+                else: st.error("Неверный код")
 
-            if st.button("Зарегистрироваться"):
-                if reg_code == WEDDING_CODE:
-                    success, msg = sign_up(reg_email, reg_pass, reg_name)
-                    if success:
-                        st.success(msg)
-                    else:
-                        st.error(msg)
-                else:
-                    st.error("Неверный секретный код свадьбы!")
-        
-        # ЛОГИКА ВОССТАНОВЛЕНИЯ ПАРОЛЯ
         with tab3:
-            st.write("Введите ваш Email. Мы отправим вам временный код для входа.")
-            otp_email = st.text_input("Email для восстановления", key="otp_email")
+            # Восстановление
+            otp_email = st.text_input("Email", key="o_email")
+            if st.button("Получить код входа"):
+                ok, msg = send_otp(otp_email)
+                if ok: st.success(msg)
             
-            # Состояние: отправлен код или нет
-            if 'otp_sent' not in st.session_state:
-                st.session_state['otp_sent'] = False
-
-            if not st.session_state['otp_sent']:
-                if st.button("Отправить код"):
-                    if otp_email:
-                        success, msg = send_otp(otp_email)
-                        if success:
-                            st.session_state['otp_sent'] = True
-                            st.success(msg)
-                            time.sleep(1)
-                            st.rerun()
-                        else:
-                            st.error(msg)
-                    else:
-                        st.error("Введите Email")
-            else:
-                st.info(f"Код отправлен на {otp_email}. Проверьте почту (и спам).")
-                otp_code = st.text_input("6-значный код из письма", key="otp_code")
-                
-                col1, col2 = st.columns(2)
-                with col1:
-                    if st.button("Войти по коду"):
-                        success, msg = verify_otp_login(otp_email, otp_code)
-                        if success:
-                            st.success("Вход выполнен! Теперь вы можете сменить пароль в Настройках.")
-                            st.session_state['otp_sent'] = False
-                            time.sleep(1)
-                            st.rerun()
-                        else:
-                            st.error(msg)
-                with col2:
-                    if st.button("Назад / Другой Email"):
-                        st.session_state['otp_sent'] = False
-                        st.rerun()
-
-    # Если пользователь АВТОРИЗОВАН
-    else:
-        # Получаем данные гостя
-        try:
-            user_id = st.session_state['user'].id
-            response = supabase.table("guests").select("*").eq("id", user_id).execute()
-            guest_info = response.data[0] if response.data else {}
-        except Exception:
-            guest_info = {}
-
-        st.markdown(f"### Привет, {guest_info.get('full_name', 'Гость')}!")
+            otp_code = st.text_input("Код из письма", key="o_code")
+            if st.button("Войти по коду"):
+                ok, msg = verify_otp_login(otp_email, otp_code)
+                if ok: st.rerun()
+                else: st.error(msg)
         
-        menu_tab1, menu_tab2, menu_tab3 = st.tabs(["💌 Приглашение", "✍️ RSVP (Анкета)", "⚙️ Настройки"])
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        with menu_tab1:
-            st.image("https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", caption="Ждем вас!")
-            st.write("""
-            Мы будем счастливы видеть вас в этот особенный день!
-            
-            **Программа:**
-            * 14:00 - Сбор гостей
-            * 15:00 - Церемония
-            * 17:00 - Банкет
-            
-            **Адрес:** Усадьба "Счастье", ул. Лесная, д. 1.
-            """)
+    else:
+        # --- ПОЛЬЗОВАТЕЛЬ АВТОРИЗОВАН ---
+        try:
+            u_id = st.session_state['user'].id
+            data = supabase.table("guests").select("*").eq("id", u_id).execute().data[0]
+        except: data = {}
 
-        with menu_tab2:
-            st.write("Пожалуйста, подтвердите ваше присутствие.")
-            
-            current_status = guest_info.get('attendance_status', 'Думаю')
-            current_food = guest_info.get('food_preference', '')
+        st.markdown(f"<p style='text-align: center; margin-top: 20px;'>Добро пожаловать, {data.get('full_name', 'Гость')}!</p>", unsafe_allow_html=True)
 
-            status_options = ['Я приду', 'Не смогу', 'Думаю']
-            try:
-                index_status = status_options.index(current_status)
-            except:
-                index_status = 2
+        # Меню вкладок
+        m1, m2, m3, m4 = st.tabs(["Программа", "Карта", "Анкета (RSVP)", "Профиль"])
 
-            new_status = st.selectbox("Вы будете с нами?", status_options, index=index_status)
-            new_food = st.text_area("Предпочтения в еде / Аллергии", value=current_food)
+        with m1:
+            st.markdown("""
+            <div style="text-align: center; padding: 20px;">
+                <p><b>14:00</b> — Сбор гостей</p>
+                <p><b>15:00</b> — Церемония бракосочетания</p>
+                <p><b>17:00</b> — Праздничный банкет</p>
+                <p><b>23:00</b> — Завершение вечера</p>
+            </div>
+            """, unsafe_allow_html=True)
+            st.image("https://images.unsplash.com/photo-1519225421980-715cb0202128?auto=format&fit=crop&w=1000&q=80", use_container_width=True)
 
-            if st.button("Сохранить ответ"):
-                update_rsvp(new_status, new_food)
+        with m2:
+            st.markdown("<br>", unsafe_allow_html=True)
+            # 2GIS Карта
+            lat, lon = 42.923482, 71.419786
+            static_url = f"https://static.maps.2gis.com/1.0?center={lon},{lat}&zoom=16&size=600,300"
+            st.image(static_url, caption="Ресторан 'Счастье'")
+            st.link_button("📍 Открыть навигатор (2GIS)", f"https://2gis.kz/taraz/firm/70000001100842703", type="primary", use_container_width=True)
+
+        with m3:
+            st.markdown("<div style='background-color: white; padding: 20px; border-radius: 10px;'>", unsafe_allow_html=True)
+            st.write("Будете ли вы с нами?")
+            status = st.selectbox("Ваш ответ:", ['Я приду', 'Не смогу', 'Думаю'], index=['Я приду', 'Не смогу', 'Думаю'].index(data.get('attendance_status', 'Думаю')))
+            food = st.text_area("Аллергии / Пожелания", value=data.get('food_preference', ''))
+            if st.button("Отправить ответ", use_container_width=True):
+                update_rsvp(status, food)
                 time.sleep(1)
                 st.rerun()
+            st.markdown("</div>", unsafe_allow_html=True)
 
-        with menu_tab3:
-            st.write("Управление аккаунтом")
+        with m4:
+            with st.expander("Сменить пароль"):
+                np = st.text_input("Новый пароль", type="password")
+                if st.button("Сохранить"): change_password(np)
             
-            with st.expander("Сменить пароль", expanded=True): # Развернуто, если зашли через восстановление
-                st.write("Введите новый пароль ниже:")
-                new_p = st.text_input("Новый пароль", type="password", key="new_p")
-                conf_p = st.text_input("Подтвердите пароль", type="password", key="conf_p")
-                
-                if st.button("Изменить пароль"):
-                    if new_p == conf_p and len(new_p) > 5:
-                        change_password(new_p)
-                    else:
-                        st.error("Пароли не совпадают или слишком короткие.")
-
-            if st.button("Выйти из системы"):
+            if st.button("Выйти", type="secondary", use_container_width=True):
                 supabase.auth.sign_out()
                 st.session_state['user'] = None
                 st.rerun()
