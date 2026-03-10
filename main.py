@@ -41,6 +41,20 @@ def get_supabase(access_token: str = None, refresh_token: str = None) -> Client:
     return client
 
 
+# ── Health check ───────────────────────────────────────────────────────────
+
+
+@app.get("/api/health")
+async def health():
+    sb_ok = bool(SUPABASE_URL and SUPABASE_KEY)
+    return {
+        "status": "ok",
+        "supabase_url_set": sb_ok,
+        "wedding_code_set": bool(WEDDING_CODE),
+        "env": os.getenv("RAILWAY_ENVIRONMENT", os.getenv("RENDER", "local")),
+    }
+
+
 # ── Pages ──────────────────────────────────────────────────────────────────
 
 
@@ -200,15 +214,17 @@ async def change_password(
 
 
 def _set_cookies(response: Response, access_token: str, refresh_token: str):
+    # secure=True required for HTTPS (Railway/Render); works fine locally too
+    is_prod = os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("RENDER")
     response.set_cookie(
-        "access_token", access_token, httponly=True, samesite="lax", max_age=86400 * 7
+        "access_token", access_token,
+        httponly=True, samesite="none" if is_prod else "lax",
+        secure=bool(is_prod), max_age=86400 * 7
     )
     response.set_cookie(
-        "refresh_token",
-        refresh_token,
-        httponly=True,
-        samesite="lax",
-        max_age=86400 * 30,
+        "refresh_token", refresh_token,
+        httponly=True, samesite="none" if is_prod else "lax",
+        secure=bool(is_prod), max_age=86400 * 30,
     )
 
 
