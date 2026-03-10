@@ -55,10 +55,10 @@ def get_supabase(access_token: str = None, refresh_token: str = None) -> Client:
 
 @app.get("/api/health")
 async def health():
-    sb_ok = bool(SUPABASE_URL and SUPABASE_KEY)
     return {
         "status": "ok",
-        "supabase_url_set": sb_ok,
+        "supabase_url": SUPABASE_URL,           # показываем для отладки
+        "supabase_key_len": len(SUPABASE_KEY),  # длина ключа (не сам ключ)
         "wedding_code_set": bool(WEDDING_CODE),
         "env": os.getenv("RAILWAY_ENVIRONMENT", os.getenv("RENDER", "local")),
     }
