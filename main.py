@@ -87,9 +87,9 @@ async def login(request: Request, response: Response):
             _set_cookies(response, res.session.access_token, res.session.refresh_token)
             meta = res.user.user_metadata or {}
             return {"success": True, "full_name": meta.get("full_name", "Guest")}
-        return JSONResponse(401, {"success": False, "error": "auth_failed"})
+        return JSONResponse(status_code=401, content={"success": False, "error": "auth_failed"})
     except Exception as e:
-        return JSONResponse(400, {"success": False, "error": str(e)})
+        return JSONResponse(status_code=400, content={"success": False, "error": str(e)})
 
 
 @app.post("/api/register")
@@ -97,7 +97,7 @@ async def register(request: Request):
     try:
         body = await request.json()
         if body.get("wedding_code") != WEDDING_CODE:
-            return JSONResponse(403, {"success": False, "error": "invalid_code"})
+            return JSONResponse(status_code=403, content={"success": False, "error": "invalid_code"})
         sb = get_supabase()
         res = sb.auth.sign_up(
             {
@@ -108,12 +108,12 @@ async def register(request: Request):
         )
         if res.user:
             return {"success": True}
-        return JSONResponse(400, {"success": False, "error": "user_exists"})
+        return JSONResponse(status_code=400, content={"success": False, "error": "user_exists"})
     except Exception as e:
         err = str(e).lower()
         if "already" in err:
-            return JSONResponse(409, {"success": False, "error": "user_exists"})
-        return JSONResponse(400, {"success": False, "error": str(e)})
+            return JSONResponse(status_code=409, content={"success": False, "error": "user_exists"})
+        return JSONResponse(status_code=400, content={"success": False, "error": str(e)})
 
 
 @app.post("/api/otp/send")
@@ -124,7 +124,7 @@ async def send_otp(request: Request):
         sb.auth.sign_in_with_otp({"email": body["email"]})
         return {"success": True}
     except Exception as e:
-        return JSONResponse(400, {"success": False, "error": str(e)})
+        return JSONResponse(status_code=400, content={"success": False, "error": str(e)})
 
 
 @app.post("/api/otp/verify")
@@ -139,9 +139,9 @@ async def verify_otp(request: Request, response: Response):
             _set_cookies(response, res.session.access_token, res.session.refresh_token)
             meta = res.user.user_metadata or {}
             return {"success": True, "full_name": meta.get("full_name", "Guest")}
-        return JSONResponse(401, {"success": False, "error": "invalid_otp"})
+        return JSONResponse(status_code=401, content={"success": False, "error": "invalid_otp"})
     except Exception as e:
-        return JSONResponse(400, {"success": False, "error": str(e)})
+        return JSONResponse(status_code=400, content={"success": False, "error": str(e)})
 
 
 @app.post("/api/logout")
@@ -160,12 +160,12 @@ async def get_me(
     refresh_token: Optional[str] = Cookie(None),
 ):
     if not access_token:
-        return JSONResponse(401, {"success": False})
+        return JSONResponse(status_code=401, content={"success": False})
     try:
         sb = get_supabase(access_token, refresh_token)
         u_resp = sb.auth.get_user(access_token)
         if not (u_resp and u_resp.user):
-            return JSONResponse(401, {"success": False})
+            return JSONResponse(status_code=401, content={"success": False})
         u = u_resp.user
         rows = sb.table("guests").select("*").eq("id", u.id).execute().data
         guest = rows[0] if rows else {}
@@ -177,7 +177,7 @@ async def get_me(
             "food_preference": guest.get("food_preference", ""),
         }
     except Exception as e:
-        return JSONResponse(401, {"success": False, "error": str(e)})
+        return JSONResponse(status_code=401, content={"success": False, "error": str(e)})
 
 
 @app.post("/api/rsvp")
@@ -187,19 +187,19 @@ async def update_rsvp(
     refresh_token: Optional[str] = Cookie(None),
 ):
     if not access_token:
-        return JSONResponse(401, {"success": False})
+        return JSONResponse(status_code=401, content={"success": False})
     try:
         body = await request.json()
         sb = get_supabase(access_token, refresh_token)
         u_resp = sb.auth.get_user(access_token)
         if not (u_resp and u_resp.user):
-            return JSONResponse(401, {"success": False})
+            return JSONResponse(status_code=401, content={"success": False})
         sb.table("guests").update(
             {"attendance_status": body["status"], "food_preference": body["food"]}
         ).eq("id", u_resp.user.id).execute()
         return {"success": True}
     except Exception as e:
-        return JSONResponse(400, {"success": False, "error": str(e)})
+        return JSONResponse(status_code=400, content={"success": False, "error": str(e)})
 
 
 @app.post("/api/change-password")
@@ -209,26 +209,25 @@ async def change_password(
     refresh_token: Optional[str] = Cookie(None),
 ):
     if not access_token:
-        return JSONResponse(401, {"success": False})
+        return JSONResponse(status_code=401, content={"success": False})
     try:
         body = await request.json()
         sb = get_supabase(access_token, refresh_token)
         sb.auth.update_user({"password": body["password"]})
         return {"success": True}
     except Exception as e:
-        return JSONResponse(400, {"success": False, "error": str(e)})
+        return JSONResponse(status_code=400, content={"success": False, "error": str(e)})
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────
 
 
 def _set_cookies(response: Response, access_token: str, refresh_token: str):
-    # secure=True required for HTTPS (Railway/Render); works fine locally too
     is_prod = os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("RENDER")
     response.set_cookie(
         "access_token", access_token,
         httponly=True, samesite="none" if is_prod else "lax",
-        secure=bool(is_prod), max_age=86400 * 7
+        secure=bool(is_prod), max_age=86400 * 7,
     )
     response.set_cookie(
         "refresh_token", refresh_token,
