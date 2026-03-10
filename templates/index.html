@@ -369,12 +369,14 @@
 <button id="music-btn" onclick="toggleMusic()" title="Music">♪</button>
 
 <!-- Background audio -->
+<!--
+  МУЗЫКА: три варианта (используется первый рабочий source):
+  1. Положите свой файл в static/music.mp3
+  2. Или замените URL ниже на прямую ссылку на .mp3
+-->
 <audio id="bg-music" loop preload="auto">
-  <!--
-    Place your music file at:  static/music.mp3
-    Or replace the src below with any direct .mp3 URL
-  -->
   <source src="/static/music.mp3" type="audio/mpeg" />
+  <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3" type="audio/mpeg" />
 </audio>
 
 <!-- ══ SPLASH SCREEN ══════════════════════════════════════════════════════ -->
