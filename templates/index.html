@@ -795,20 +795,30 @@ function showDashboard(data) {
   document.getElementById('rsvp-food').value = data.food_preference || '';
 }
 
+// ── Safe fetch helper ──────────────────────────────────────────────────────
+async function apiFetch(url, options = {}) {
+  const res = await fetch(url, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
+  });
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    // Server returned non-JSON (HTML error page) — show raw status
+    return { success: false, error: `Server error ${res.status}: ${text.slice(0, 120)}` };
+  }
+}
+
 // ── Auth actions ──────────────────────────────────────────────────────────
 async function doLogin() {
   const email = document.getElementById('l-email').value.trim();
   const password = document.getElementById('l-pass').value;
   if (!email || !password) return showMsg('msg-login', T[lang].err_fields, false);
   try {
-    const res = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, password}) });
-    const data = await res.json();
-    if (data.success) {
-      guestData = data;
-      showDashboard(data);
-    } else {
-      showMsg('msg-login', data.error || 'Error', false);
-    }
+    const data = await apiFetch('/api/login', { method: 'POST', body: JSON.stringify({ email, password }) });
+    if (data.success) { guestData = data; showDashboard(data); }
+    else showMsg('msg-login', data.error || 'Error', false);
   } catch (e) { showMsg('msg-login', String(e), false); }
 }
 
@@ -819,8 +829,7 @@ async function doRegister() {
   const code  = document.getElementById('r-code').value;
   if (!name || !email || !pass || !code) return showMsg('msg-reg', T[lang].err_fields, false);
   try {
-    const res = await fetch('/api/register', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, email, password:pass, wedding_code:code}) });
-    const data = await res.json();
+    const data = await apiFetch('/api/register', { method: 'POST', body: JSON.stringify({ name, email, password: pass, wedding_code: code }) });
     if (data.success) { showMsg('msg-reg', T[lang].success_reg, true); }
     else if (data.error === 'invalid_code') { showMsg('msg-reg', T[lang].err_code, false); }
     else if (data.error === 'user_exists') { showMsg('msg-reg', T[lang].err_user_exists, false); }
@@ -832,8 +841,7 @@ async function sendOTP() {
   const email = document.getElementById('o-email').value.trim();
   if (!email) return showMsg('msg-otp', T[lang].err_fields, false);
   try {
-    const res = await fetch('/api/otp/send', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email}) });
-    const data = await res.json();
+    const data = await apiFetch('/api/otp/send', { method: 'POST', body: JSON.stringify({ email }) });
     showMsg('msg-otp', data.success ? T[lang].success_otp : (data.error || 'Error'), data.success);
   } catch (e) { showMsg('msg-otp', String(e), false); }
 }
@@ -843,8 +851,7 @@ async function verifyOTP() {
   const token = document.getElementById('o-code').value.trim();
   if (!email || !token) return showMsg('msg-otp', T[lang].err_fields, false);
   try {
-    const res = await fetch('/api/otp/verify', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, token}) });
-    const data = await res.json();
+    const data = await apiFetch('/api/otp/verify', { method: 'POST', body: JSON.stringify({ email, token }) });
     if (data.success) { guestData = data; showDashboard(data); }
     else showMsg('msg-otp', data.error || 'Invalid code', false);
   } catch (e) { showMsg('msg-otp', String(e), false); }
@@ -876,8 +883,7 @@ async function doRSVP() {
   const status = document.getElementById('rsvp-status').value;
   const food = document.getElementById('rsvp-food').value;
   try {
-    const res = await fetch('/api/rsvp', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status, food}) });
-    const data = await res.json();
+    const data = await apiFetch('/api/rsvp', { method: 'POST', body: JSON.stringify({ status, food }) });
     showMsg('msg-rsvp', data.success ? T[lang].success_saved : (data.error || 'Error'), data.success);
   } catch (e) { showMsg('msg-rsvp', String(e), false); }
 }
@@ -886,8 +892,7 @@ async function doChangePass() {
   const password = document.getElementById('p-newpass').value;
   if (!password) return showMsg('msg-pass', T[lang].err_fields, false);
   try {
-    const res = await fetch('/api/change-password', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({password}) });
-    const data = await res.json();
+    const data = await apiFetch('/api/change-password', { method: 'POST', body: JSON.stringify({ password }) });
     showMsg('msg-pass', data.success ? T[lang].success_pass : (data.error || 'Error'), data.success);
   } catch (e) { showMsg('msg-pass', String(e), false); }
 }

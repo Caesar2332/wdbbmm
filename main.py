@@ -16,6 +16,15 @@ WEDDING_CODE = os.getenv("WEDDING_CODE", "")
 
 app = FastAPI(title="Wedding Invitation — Малика & Бейбарыс")
 
+
+@app.exception_handler(Exception)
+async def global_exception_handler(_request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={"success": False, "error": str(exc)},
+    )
+
+
 # Ensure static dir exists
 pathlib.Path("static").mkdir(exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
