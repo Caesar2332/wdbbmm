@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Малика &amp; Бейбарыс — 08.08.2026</title>
+  <title>Бейбарыс &amp; Малика — 08.08.2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -382,7 +382,7 @@
 <div id="splash">
   <div class="splash-card">
     <span class="splash-rose">🌹</span>
-    <div class="splash-names" id="splash-names">Малика &amp; Бейбарыс</div>
+    <div class="splash-names" id="splash-names">Бейбарыс &amp; Малика</div>
     <div class="splash-date" id="splash-date">08 · 08 · 2026</div>
     <div class="splash-divider">✦ ────── ✦</div>
     <button class="btn-enter" id="btn-enter" onclick="enterSite()">
@@ -405,7 +405,7 @@
   <!-- Hero -->
   <section class="hero">
     <p class="hero-subtitle" data-i18n="header">Приглашаем на свадьбу</p>
-    <h1 class="hero-title" data-i18n="title">Малика &amp; Бейбарыс</h1>
+    <h1 class="hero-title" data-i18n="title">Бейбарыс &amp; Малика</h1>
     <p class="hero-date" data-i18n="date_str">08 | 08 | 2026</p>
     <span class="floral">❋</span>
   </section>
@@ -566,7 +566,7 @@ const RSVP_RU = ['Я приду', 'Не смогу', 'Думаю'];
 
 const T = {
   ru: {
-    title: 'Малика & Бейбарыс', header: 'Приглашаем на свадьбу',
+    title: 'Бейбарыс & Малика', header: 'Приглашаем на свадьбу',
     date_str: '08 | 08 | 2026',
     days: 'Дней', hours: 'Часов', mins: 'Минут', secs: 'Секунд',
     login_header: 'Вход для гостей',
@@ -592,7 +592,7 @@ const T = {
     rsvp_opts: ['Я приду', 'Не смогу', 'Думаю'],
   },
   kz: {
-    title: 'Малика & Бейбарыс', header: 'Үйлену тойына шақырамыз',
+    title: 'Бейбарыс & Малика', header: 'Үйлену тойына шақырамыз',
     date_str: '08 | 08 | 2026',
     days: 'Күн', hours: 'Сағат', mins: 'Минут', secs: 'Секунд',
     login_header: 'Қонақтарға кіру',
@@ -618,7 +618,7 @@ const T = {
     rsvp_opts: ['Мен келемін', 'Келе алмаймын', 'Ойланудамын'],
   },
   en: {
-    title: 'Malika & Beibarys', header: 'Wedding Invitation',
+    title: 'Beibarys & Malika', header: 'Wedding Invitation',
     date_str: 'August 08, 2026',
     days: 'Days', hours: 'Hours', mins: 'Minutes', secs: 'Seconds',
     login_header: 'Guest Login',
@@ -697,7 +697,7 @@ function updateMusicBtn() {
 // ── Petals ───────────────────────────────────────────────────────────────
 function spawnPetals() {
   const container = document.getElementById('petals');
-  const symbols = ['🌸','🌺','🌹','✿','❀','🌼'];
+  const symbols = ['🌸','✿','❀','🌼'];
   for (let i = 0; i < 18; i++) {
     const p = document.createElement('span');
     p.className = 'petal';

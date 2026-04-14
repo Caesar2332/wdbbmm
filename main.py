@@ -14,7 +14,7 @@ SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 WEDDING_CODE = os.getenv("WEDDING_CODE", "")
 
-app = FastAPI(title="Wedding Invitation — Малика & Бейбарыс")
+app = FastAPI(title="Wedding Invitation — Бейбарыс & Малика")
 
 
 @app.exception_handler(Exception)
