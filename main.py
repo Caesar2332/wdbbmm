@@ -18,10 +18,11 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 WEDDING_CODE = os.getenv("WEDDING_CODE", "")
-SMTP_SERVER = os.getenv("SMTP_SERVER", "")
-SMTP_PORT = int(os.getenv("SMTP_PORT", 0))
+SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
 SMTP_USER = os.getenv("SMTP_USER", "your_email@gmail.com")
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "your_app_password")
+
 app = FastAPI(title="Wedding Invitation — Бейбарыс & Малика")
 
 
@@ -50,6 +51,7 @@ def send_welcome_email(to_email: str, guest_name: str):
         print(f"Приветственное письмо отправлено на {to_email}")
     except Exception as e:
         print(f"Ошибка при отправке письма: {str(e)}")
+
 
 @app.exception_handler(Exception)
 async def global_exception_handler(_request: Request, exc: Exception):
@@ -178,26 +180,28 @@ async def verify_otp(request: Request, response: Response, background_tasks: Bac
             meta = res.user.user_metadata or {}
             full_name = meta.get("full_name", "Guest")
 
-            # Проверяем, является ли это новым пользователем.
-            # В Supabase даты хранятся в ISO формате. Сравниваем, чтобы понять, первый ли это вход.
             created_at = res.user.created_at
             last_sign_in = res.user.last_sign_in_at
             
-            # Если время создания и последнего входа почти совпадают (или last_sign_in отсутствует), 
-            # значит человек только что зарегистрировался.
             is_new_user = False
             if created_at and last_sign_in:
-                # Преобразуем строки в datetime для надежного сравнения, либо используем простую логику:
-                # Если разница между регистрацией и логином меньше пары минут - это новый юзер
-                dt_created = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
-                dt_last = datetime.fromisoformat(last_sign_in.replace('Z', '+00:00'))
+                # Безопасная конвертация дат, учитывая, что они могут быть как str, так и datetime
+                if isinstance(created_at, str):
+                    dt_created = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                else:
+                    dt_created = created_at
+                    
+                if isinstance(last_sign_in, str):
+                    dt_last = datetime.fromisoformat(last_sign_in.replace('Z', '+00:00'))
+                else:
+                    dt_last = last_sign_in
                 
+                # Если разница меньше 2 минут
                 if (dt_last - dt_created).total_seconds() < 120:
                     is_new_user = True
             elif not last_sign_in:
                 is_new_user = True
 
-            # Если это первая регистрация, отправляем письмо в фоне
             if is_new_user:
                 background_tasks.add_task(send_welcome_email, body["email"], full_name)
 
