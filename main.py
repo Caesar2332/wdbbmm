@@ -5,11 +5,6 @@ from fastapi.templating import Jinja2Templates
 from supabase import create_client, Client, ClientOptions
 from dotenv import load_dotenv
 from typing import Optional
-import smtplib
-from email.mime.text import MIMEText
-from datetime import datetime, timezone
-from email.mime.multipart import MIMEMultipart
-from fastapi import BackgroundTasks
 import pathlib
 import os
 
@@ -18,39 +13,8 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL", "")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
 WEDDING_CODE = os.getenv("WEDDING_CODE", "")
-SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
-SMTP_USER = os.getenv("SMTP_USER", "your_email@gmail.com")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "your_app_password")
 
 app = FastAPI(title="Wedding Invitation — Бейбарыс & Малика")
-
-
-def send_welcome_email(to_email: str, guest_name: str):
-    msg = MIMEMultipart()
-    msg['From'] = SMTP_USER
-    msg['To'] = to_email
-    msg['Subject'] = "Успешная регистрация на свадьбу!"
-
-    # Текст письма
-    body = (
-        f"Привет, {guest_name}!\n\n"
-        f"Ваша почта успешно подтверждена. Вы зарегистрировались "
-        f"на свадьбу Малики и Бейбарыса.\n\n"
-        f"С нетерпением ждем вас 8 августа в городе Тараз (ресторан Arai Plaza)!\n"
-    )
-    
-    msg.attach(MIMEText(body, 'plain', 'utf-8'))
-
-    try:
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
-        server.login(SMTP_USER, SMTP_PASSWORD)
-        server.send_message(msg)
-        server.quit()
-        print(f"Приветственное письмо отправлено на {to_email}")
-    except Exception as e:
-        print(f"Ошибка при отправке письма: {str(e)}")
 
 
 @app.exception_handler(Exception)
@@ -167,7 +131,7 @@ async def send_otp(request: Request):
 
 
 @app.post("/api/otp/verify")
-async def verify_otp(request: Request, response: Response, background_tasks: BackgroundTasks):
+async def verify_otp(request: Request, response: Response):
     try:
         body = await request.json()
         sb = get_supabase()
@@ -178,35 +142,7 @@ async def verify_otp(request: Request, response: Response, background_tasks: Bac
         if res.user:
             _set_cookies(response, res.session.access_token, res.session.refresh_token)
             meta = res.user.user_metadata or {}
-            full_name = meta.get("full_name", "Guest")
-
-            created_at = res.user.created_at
-            last_sign_in = res.user.last_sign_in_at
-            
-            is_new_user = False
-            if created_at and last_sign_in:
-                # Безопасная конвертация дат, учитывая, что они могут быть как str, так и datetime
-                if isinstance(created_at, str):
-                    dt_created = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
-                else:
-                    dt_created = created_at
-                    
-                if isinstance(last_sign_in, str):
-                    dt_last = datetime.fromisoformat(last_sign_in.replace('Z', '+00:00'))
-                else:
-                    dt_last = last_sign_in
-                
-                # Если разница меньше 2 минут
-                if (dt_last - dt_created).total_seconds() < 120:
-                    is_new_user = True
-            elif not last_sign_in:
-                is_new_user = True
-
-            if is_new_user:
-                background_tasks.add_task(send_welcome_email, body["email"], full_name)
-
-            return {"success": True, "full_name": full_name}
-            
+            return {"success": True, "full_name": meta.get("full_name", "Guest")}
         return JSONResponse(status_code=401, content={"success": False, "error": "invalid_otp"})
     except Exception as e:
         return JSONResponse(status_code=400, content={"success": False, "error": str(e)})
