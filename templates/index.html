@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="kk">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,13 +8,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
-    /* ── Reset & Variables ─────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --gold:       #C9A96E;
       --gold-dark:  #8B7E66;
       --cream:      #FDF8F0;
-      --cream-dark: #F0EBE0;
       --brown:      #5E503F;
       --brown-dark: #3D3228;
       --glass:      rgba(255,255,255,0.88);
@@ -31,43 +29,26 @@
       overflow-x: hidden;
     }
 
-    /* ── Petals ────────────────────────────────────────── */
+    /* Petals */
     #petals { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-    .petal {
-      position: absolute;
-      top: -60px;
-      font-size: 1.2rem;
-      opacity: 0;
-      animation: fall linear infinite;
-      user-select: none;
-    }
+    .petal { position: absolute; top: -60px; opacity: 0; animation: fall linear infinite; user-select: none; }
     @keyframes fall {
-      0%   { transform: translateY(0) rotate(0deg) translateX(0);   opacity: .7; }
-      100% { transform: translateY(110vh) rotate(720deg) translateX(40px); opacity: 0; }
+      0%   { transform: translateY(0) rotate(0deg); opacity: .65; }
+      100% { transform: translateY(110vh) rotate(720deg) translateX(30px); opacity: 0; }
     }
 
-    /* ── Music Button ──────────────────────────────────── */
+    /* Music */
     #music-btn {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 999;
-      width: 48px; height: 48px;
-      border-radius: 50%;
-      border: 2px solid var(--gold);
-      background: var(--glass);
-      color: var(--gold-dark);
-      font-size: 1.2rem;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      box-shadow: var(--shadow);
-      transition: all .3s;
-      display: none;
+      position: fixed; bottom: 24px; right: 24px; z-index: 999;
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 2px solid var(--gold); background: var(--glass);
+      color: var(--gold-dark); font-size: 1.2rem; cursor: pointer;
+      backdrop-filter: blur(8px); box-shadow: var(--shadow); transition: all .3s; display: none;
     }
     #music-btn:hover { background: var(--gold); color: #fff; }
     #music-btn.paused { opacity: .6; }
 
-    /* ── Splash ────────────────────────────────────────── */
+    /* Splash */
     #splash {
       position: fixed; inset: 0; z-index: 100;
       display: flex; align-items: center; justify-content: center;
@@ -75,584 +56,484 @@
       transition: opacity .8s ease, visibility .8s ease;
     }
     #splash.hidden { opacity: 0; visibility: hidden; }
-
-    .splash-card {
-      text-align: center;
-      padding: 60px 40px;
-      animation: fadeUp .8s ease both;
-    }
+    .splash-card { text-align: center; padding: 60px 40px; animation: fadeUp .8s ease both; }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(30px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-    .splash-rose { font-size: 3rem; display: block; margin-bottom: 24px; animation: pulse 2s ease-in-out infinite; }
-    @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-
-    .splash-names {
-      font-family: 'Great Vibes', cursive;
-      font-size: clamp(2.8rem, 8vw, 5rem);
-      color: var(--gold);
-      line-height: 1.2;
-      margin-bottom: 12px;
-    }
-    .splash-date {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem;
-      color: rgba(255,255,255,0.7);
-      letter-spacing: 6px;
-      text-transform: uppercase;
-      margin-bottom: 36px;
-    }
+    .splash-ornament { font-size: 2rem; color: var(--gold); opacity: .7; display: block; margin-bottom: 20px; letter-spacing: 6px; }
+    .splash-names { font-family: 'Great Vibes', cursive; font-size: clamp(2.8rem, 8vw, 5rem); color: var(--gold); line-height: 1.2; margin-bottom: 12px; }
+    .splash-date { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: rgba(255,255,255,0.7); letter-spacing: 6px; text-transform: uppercase; margin-bottom: 36px; }
     .splash-divider { color: var(--gold); font-size: 1rem; letter-spacing: 8px; margin-bottom: 40px; opacity: .8; }
-
     .btn-enter {
       display: inline-flex; align-items: center; gap: 10px;
-      padding: 16px 40px;
-      border: 2px solid var(--gold);
-      border-radius: 50px;
-      background: transparent;
-      color: var(--gold);
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all .4s;
+      padding: 16px 40px; border: 2px solid var(--gold); border-radius: 50px;
+      background: transparent; color: var(--gold); font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: all .4s;
     }
     .btn-enter:hover { background: var(--gold); color: #fff; transform: scale(1.04); }
 
-    /* ── Main App ──────────────────────────────────────── */
+    /* App */
     #app { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 0 20px 80px; display: none; }
 
-    /* Language */
-    .lang-bar {
-      display: flex; justify-content: flex-end; gap: 6px;
-      padding: 20px 0 0;
-    }
+    /* Reveal */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Lang */
+    .lang-bar { display: flex; justify-content: flex-end; gap: 6px; padding: 20px 0 0; }
     .lang-btn {
-      padding: 5px 14px;
-      border-radius: 20px;
-      border: 1px solid var(--gold);
-      background: transparent;
-      color: var(--gold-dark);
-      font-family: 'Montserrat', sans-serif;
-      font-size: .7rem;
-      font-weight: 500;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: all .3s;
+      padding: 5px 14px; border-radius: 20px; border: 1px solid var(--gold);
+      background: transparent; color: var(--gold-dark); font-family: 'Montserrat', sans-serif;
+      font-size: .7rem; font-weight: 500; letter-spacing: 1px; cursor: pointer; transition: all .3s;
     }
     .lang-btn.active, .lang-btn:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
 
     /* Hero */
     .hero { text-align: center; padding: 40px 0 20px; }
-    .hero-subtitle {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: .85rem;
-      letter-spacing: 5px;
-      text-transform: uppercase;
-      color: var(--gold-dark);
-      margin-bottom: 8px;
+    .hero-subtitle { font-family: 'Cormorant Garamond', serif; font-size: .85rem; letter-spacing: 5px; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 8px; }
+    .hero-title { font-family: 'Great Vibes', cursive; font-size: clamp(3rem, 10vw, 5rem); color: var(--gold-dark); font-weight: 400; line-height: 1.1; margin-bottom: 16px; }
+    .hero-date { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; letter-spacing: 6px; color: var(--brown); }
+    .floral { color: var(--gold); font-size: 1.4rem; letter-spacing: 8px; margin: 16px 0; display: block; }
+
+    /* Hero image */
+    .hero-img-wrap { width: 100%; border-radius: 20px; overflow: hidden; margin-bottom: 28px; box-shadow: var(--shadow); position: relative; height: 300px; }
+    .hero-img-wrap img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.06); transition: transform 8s ease; }
+    .hero-img-wrap.visible img { transform: scale(1); }
+    .hero-img-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 55%, rgba(61,50,40,0.45) 100%); }
+
+    /* Invitation card */
+    .invite-card {
+      background: linear-gradient(160deg, #3d2a1a 0%, #5c3d26 60%, #3d2a1a 100%);
+      border-radius: 20px; padding: 40px 32px; margin-bottom: 24px;
+      box-shadow: var(--shadow); text-align: center; position: relative; overflow: hidden;
     }
-    .hero-title {
-      font-family: 'Great Vibes', cursive;
-      font-size: clamp(3rem, 10vw, 5rem);
-      color: var(--gold-dark);
-      font-weight: 400;
-      line-height: 1.1;
-      margin-bottom: 16px;
+    .invite-card::before {
+      content: '❖'; position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+      font-size: 1rem; color: rgba(201,169,110,0.4); letter-spacing: 20px;
     }
-    .hero-date {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.15rem;
-      letter-spacing: 6px;
-      color: var(--brown);
-    }
-    .floral { color: var(--gold); font-size: 1.6rem; letter-spacing: 10px; margin: 20px 0; display: block; }
+    .invite-card-ornament { font-size: 1.5rem; color: var(--gold); opacity: .6; letter-spacing: 12px; display: block; margin-bottom: 20px; }
+    .invite-title { font-family: 'Cormorant Garamond', serif; font-size: 1rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; }
+    .invite-text { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-style: italic; color: rgba(255,255,255,0.88); line-height: 1.9; margin-bottom: 20px; }
+    .invite-closing { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; color: var(--gold); font-style: italic; }
 
     /* Countdown */
-    .countdown {
-      display: flex; align-items: center; justify-content: center;
-      gap: 8px; flex-wrap: wrap;
-      padding: 10px 0 30px;
-    }
-    .cd-box {
-      text-align: center;
-      background: var(--glass);
-      border: 1px solid rgba(201,169,110,0.3);
-      border-radius: 12px;
-      padding: 14px 18px;
-      min-width: 72px;
-      box-shadow: 0 4px 20px rgba(61,50,40,0.07);
-    }
-    .cd-num {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.2rem;
-      font-weight: 600;
-      color: var(--brown-dark);
-      display: block;
-    }
-    .cd-label {
-      font-size: .6rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--gold-dark);
-    }
+    .countdown { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 10px 0 30px; }
+    .cd-box { text-align: center; background: var(--glass); border: 1px solid rgba(201,169,110,0.3); border-radius: 12px; padding: 14px 18px; min-width: 72px; box-shadow: 0 4px 20px rgba(61,50,40,0.07); }
+    .cd-num { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 600; color: var(--brown-dark); display: block; }
+    .cd-label { font-size: .6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-dark); }
     .cd-sep { font-size: 1.8rem; color: var(--gold); font-family: 'Cormorant Garamond', serif; padding-bottom: 20px; }
 
+    /* Quote */
+    .quote-banner { text-align: center; padding: 32px 24px; margin-bottom: 24px; background: var(--glass); border: 1px solid rgba(201,169,110,0.25); border-radius: 20px; box-shadow: var(--shadow); }
+    .quote-text { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(1rem, 3.5vw, 1.3rem); color: var(--brown); line-height: 1.8; margin-bottom: 10px; }
+    .quote-attr { font-size: .68rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-dark); opacity: .75; }
+
+    /* Photo gallery */
+    .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+    .gallery-item { border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(61,50,40,0.1); position: relative; cursor: pointer; }
+    .gallery-item:first-child { grid-column: 1 / -1; height: 240px; }
+    .gallery-item:not(:first-child) { height: 150px; }
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; display: block; }
+    .gallery-item:hover img { transform: scale(1.06); }
+    .gallery-item .photo-overlay { position: absolute; inset: 0; background: rgba(61,50,40,0); transition: background .4s; }
+    .gallery-item:hover .photo-overlay { background: rgba(61,50,40,0.1); }
+
+    /* Lightbox */
+    #lightbox { position: fixed; inset: 0; z-index: 200; background: rgba(25,16,8,0.93); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; }
+    #lightbox.open { opacity: 1; visibility: visible; }
+    #lightbox img { max-width: 92vw; max-height: 88vh; border-radius: 12px; box-shadow: 0 20px 80px rgba(0,0,0,0.5); transform: scale(.92); transition: transform .35s ease; }
+    #lightbox.open img { transform: scale(1); }
+    #lb-close { position: absolute; top: 20px; right: 24px; color: rgba(255,255,255,0.8); font-size: 2rem; cursor: pointer; background: none; border: none; line-height: 1; }
+    #lb-close:hover { color: #fff; }
+
     /* Card */
-    .card {
-      background: var(--glass);
-      border: 1px solid rgba(201,169,110,0.2);
-      border-radius: 20px;
-      padding: 36px 32px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-      margin-bottom: 24px;
-    }
-    .card-title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--gold-dark);
-      text-align: center;
-      margin-bottom: 28px;
-    }
+    .card { background: var(--glass); border: 1px solid rgba(201,169,110,0.2); border-radius: 20px; padding: 36px 32px; box-shadow: var(--shadow); backdrop-filter: blur(10px); margin-bottom: 24px; }
+    .card-title { font-family: 'Cormorant Garamond', serif; font-size: 1rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold-dark); text-align: center; margin-bottom: 28px; }
 
-    /* Tabs */
-    .tabs { display: flex; gap: 6px; justify-content: center; margin-bottom: 28px; flex-wrap: wrap; }
-    .tab-btn {
-      padding: 8px 20px;
-      border-radius: 24px;
-      border: 1px solid rgba(201,169,110,0.4);
-      background: transparent;
-      color: var(--gold-dark);
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: all .3s;
-    }
-    .tab-btn.active { background: var(--gold); color: #fff; border-color: var(--gold); }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
+    /* Program */
+    .program-item { display: flex; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 1px solid rgba(201,169,110,0.2); }
+    .program-item:last-child { border-bottom: none; }
+    .prog-time { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; color: var(--gold-dark); min-width: 52px; }
+    .prog-event { font-size: .88rem; color: var(--brown); }
 
-    /* Form elements */
+    /* Transport */
+    .transport-tabs { display: flex; gap: 6px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
+    .ttab-btn {
+      padding: 8px 18px; border-radius: 24px; border: 1px solid rgba(201,169,110,0.4);
+      background: transparent; color: var(--gold-dark); font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; letter-spacing: 1px; cursor: pointer; transition: all .3s;
+    }
+    .ttab-btn.active { background: var(--gold); color: #fff; border-color: var(--gold); }
+    .ttab-panel { display: none; }
+    .ttab-panel.active { display: block; }
+    .transport-option { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid rgba(201,169,110,0.15); align-items: flex-start; }
+    .transport-option:last-child { border-bottom: none; }
+    .t-icon { font-size: 1.4rem; min-width: 32px; }
+
+    .t-mode { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600; color: var(--brown-dark); margin-bottom: 4px; }
+    .t-detail { font-size: .82rem; color: var(--brown); line-height: 1.6; }
+    .t-link { color: var(--gold-dark); text-decoration: underline; font-weight: 500; }
+    .t-link:hover { color: var(--brown-dark); }
+
+    /* Map */
+    .map-img { width: 100%; border-radius: 14px; margin-bottom: 16px; display: block; }
+    .btn-map { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: 50px; background: var(--gold); color: #fff; text-decoration: none; font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; letter-spacing: 2px; text-transform: uppercase; transition: all .3s; }
+    .btn-map:hover { background: var(--brown-dark); transform: translateY(-1px); }
+
+    /* Form */
     .form-group { margin-bottom: 18px; }
-    .form-label {
-      display: block;
-      font-size: .72rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--gold-dark);
-      margin-bottom: 6px;
-    }
-    .form-input, .form-select, .form-textarea {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1px solid rgba(201,169,110,0.35);
-      border-radius: 12px;
-      background: rgba(255,255,255,0.6);
-      font-family: 'Montserrat', sans-serif;
-      font-size: .9rem;
-      font-weight: 300;
-      color: var(--brown-dark);
-      transition: border .3s;
-      outline: none;
-    }
+    .form-label { display: block; font-size: .72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 6px; }
+    .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 16px; border: 1px solid rgba(201,169,110,0.35); border-radius: 12px; background: rgba(255,255,255,0.6); font-family: 'Montserrat', sans-serif; font-size: .9rem; font-weight: 300; color: var(--brown-dark); transition: border .3s; outline: none; }
     .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
     .form-textarea { resize: vertical; min-height: 90px; }
-    .form-hint { font-size: .75rem; color: var(--gold-dark); margin-bottom: 14px; font-style: italic; }
-
-    /* Buttons */
-    .btn {
-      display: block; width: 100%;
-      padding: 14px;
-      border-radius: 50px;
-      border: none;
-      background: var(--gold-dark);
-      color: #fff;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.05rem;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all .3s;
-      margin-top: 6px;
-    }
+    .btn { display: block; width: 100%; padding: 14px; border-radius: 50px; border: none; background: var(--gold-dark); color: #fff; font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: all .3s; margin-top: 6px; }
     .btn:hover { background: var(--brown-dark); transform: translateY(-1px); }
-    .btn-outline {
-      background: transparent;
-      border: 2px solid var(--gold);
-      color: var(--gold-dark);
-      margin-top: 10px;
-    }
-    .btn-outline:hover { background: var(--gold); color: #fff; }
-    .btn-sm { padding: 10px; font-size: .9rem; letter-spacing: 2px; }
-
-    /* Messages */
-    .msg {
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-size: .85rem;
-      margin: 12px 0;
-      text-align: center;
-    }
+    .msg { padding: 12px 16px; border-radius: 10px; font-size: .85rem; margin: 12px 0; text-align: center; }
     .msg-success { background: rgba(100,180,100,0.15); color: #2d6a2d; border: 1px solid rgba(100,180,100,0.3); }
-    .msg-error   { background: rgba(220,80,80,0.12); color: #8b1a1a; border: 1px solid rgba(220,80,80,0.25); }
+    .msg-error   { background: rgba(220,80,80,0.12);  color: #8b1a1a; border: 1px solid rgba(220,80,80,0.25); }
 
-    /* Dashboard */
-    .welcome-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.3rem;
-      font-style: italic;
-      text-align: center;
-      color: var(--brown);
-      margin-bottom: 24px;
-    }
-    .program-item {
-      display: flex; align-items: baseline; gap: 16px;
-      padding: 14px 0;
-      border-bottom: 1px solid rgba(201,169,110,0.2);
-    }
-    .program-item:last-child { border-bottom: none; }
-    .prog-time {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--gold-dark);
-      min-width: 52px;
-    }
-    .prog-event { font-size: .88rem; color: var(--brown); }
-    .map-img { width: 100%; border-radius: 14px; margin-bottom: 16px; display: block; }
-    .btn-map {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 14px;
-      border-radius: 50px;
-      background: var(--gold);
-      color: #fff;
-      text-decoration: none;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.05rem;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      transition: all .3s;
-    }
-    .btn-map:hover { background: var(--brown-dark); transform: translateY(-1px); }
-    .rsvp-select-wrap { margin: 16px 0; }
-    .profile-section { margin-bottom: 24px; }
-    .profile-section summary {
-      cursor: pointer;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1rem;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--gold-dark);
-      padding: 12px 0;
-    }
-
-    /* Responsive */
     @media (max-width: 480px) {
       .card { padding: 24px 18px; }
+      .invite-card { padding: 28px 18px; }
       .cd-box { min-width: 60px; padding: 10px 12px; }
       .cd-num { font-size: 1.8rem; }
+      .gallery-item:first-child { height: 190px; }
+      .gallery-item:not(:first-child) { height: 130px; }
     }
   </style>
 </head>
 <body>
 
-<!-- Floating rose petals -->
 <div id="petals"></div>
-
-<!-- Music control -->
 <button id="music-btn" onclick="toggleMusic()" title="Music">♪</button>
-
-<!-- Background audio -->
-<!--
-  МУЗЫКА: три варианта (используется первый рабочий source):
-  1. Положите свой файл в static/music.mp3
-  2. Или замените URL ниже на прямую ссылку на .mp3
--->
 <audio id="bg-music" loop preload="auto">
   <source src="/static/music.mp3" type="audio/mpeg" />
 </audio>
 
-<!-- ══ SPLASH SCREEN ══════════════════════════════════════════════════════ -->
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lb-close" onclick="closeLightbox()">✕</button>
+  <img id="lb-img" src="" alt="" />
+</div>
+
+<!-- ══ SPLASH ══ -->
 <div id="splash">
   <div class="splash-card">
-    <span class="splash-rose">🌹</span>
+    <span class="splash-ornament">✦ ❖ ✦</span>
     <div class="splash-names" id="splash-names">Малика &amp; Бейбарыс</div>
     <div class="splash-date" id="splash-date">08 · 08 · 2026</div>
-    <div class="splash-divider">✦ ────── ✦</div>
-    <button class="btn-enter" id="btn-enter" onclick="enterSite()">
+    <div class="splash-divider">── ✦ ──</div>
+    <button class="btn-enter" onclick="enterSite()">
       <span>✉</span>
-      <span id="splash-btn-text">Открыть приглашение</span>
+      <span id="splash-btn-text">Шақыруды ашу</span>
     </button>
   </div>
 </div>
 
-<!-- ══ MAIN APP ══════════════════════════════════════════════════════════ -->
+<!-- ══ APP ══ -->
 <div id="app">
 
-  <!-- Language bar -->
   <div class="lang-bar">
-    <button class="lang-btn" onclick="setLang('kz')">ҚАЗ</button>
-    <button class="lang-btn active" onclick="setLang('ru')" id="lang-ru">РУС</button>
+    <button class="lang-btn active" onclick="setLang('kz')">ҚАЗ</button>
+    <button class="lang-btn" onclick="setLang('ru')">РУС</button>
     <button class="lang-btn" onclick="setLang('en')">ENG</button>
   </div>
 
   <!-- Hero -->
-  <section class="hero">
-    <p class="hero-subtitle" data-i18n="header">Приглашаем на свадьбу</p>
-    <h1 class="hero-title" data-i18n="title">Малика &amp; Бейбарыс</h1>
+  <section class="hero reveal">
+    <p class="hero-subtitle" data-i18n="header">Үйлену тойына шақырамыз</p>
+    <h1 class="hero-title">Малика &amp; Бейбарыс</h1>
     <p class="hero-date" data-i18n="date_str">08 | 08 | 2026</p>
-    <span class="floral">❋</span>
+    <span class="floral">✦ ❖ ✦</span>
   </section>
 
+  <!-- Hero photo -->
+  <div class="hero-img-wrap reveal">
+    <img
+      src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=1200&q=80"
+      alt="Wedding"
+      loading="lazy"
+    />
+    <div class="hero-img-overlay"></div>
+  </div>
+
+  <!-- Invitation -->
+  <div class="invite-card reveal">
+    <span class="invite-card-ornament">❖</span>
+    <div class="invite-title" data-i18n="invite_title">Құрметті қонақтар!</div>
+    <p class="invite-text" data-i18n="invite_body">Құрметті ағайын-туыс, апа-жезделер, нағашы-жиен, бөлелер, бауырлар, құда-жекжат, көршілер, достар мен әріптестер!<br><br>Сіздерді Бейбарыс пен Маликаның үйлену тойына арналған салтанатты дастарханымыздың қадірлі қонағы болуға шақырамыз!</p>
+    <p class="invite-closing" data-i18n="invite_closing">Тойдың сәні — сіздер! Қуанышымызға ортақ болыңыздар!</p>
+  </div>
+
   <!-- Countdown -->
-  <div class="countdown">
-    <div class="cd-box"><span class="cd-num" id="cd-days">—</span><span class="cd-label" data-i18n="days">Дней</span></div>
+  <div class="countdown reveal">
+    <div class="cd-box"><span class="cd-num" id="cd-days">—</span><span class="cd-label" data-i18n="days">Күн</span></div>
     <div class="cd-sep">:</div>
-    <div class="cd-box"><span class="cd-num" id="cd-hours">—</span><span class="cd-label" data-i18n="hours">Часов</span></div>
+    <div class="cd-box"><span class="cd-num" id="cd-hours">—</span><span class="cd-label" data-i18n="hours">Сағат</span></div>
     <div class="cd-sep">:</div>
     <div class="cd-box"><span class="cd-num" id="cd-mins">—</span><span class="cd-label" data-i18n="mins">Минут</span></div>
     <div class="cd-sep">:</div>
     <div class="cd-box"><span class="cd-num" id="cd-secs">—</span><span class="cd-label" data-i18n="secs">Секунд</span></div>
   </div>
 
-  <!-- Auth section -->
-  <div id="auth-section">
-    <div class="card">
-      <div class="card-title" data-i18n="login_header">Вход для гостей</div>
+  <!-- Quote -->
+  <div class="quote-banner reveal">
+    <p class="quote-text" data-i18n="quote">«Бір-бірін тапқан екі жүрек — бақытты жанұяның негізі.»</p>
+  </div>
 
-      <div class="tabs">
-        <button class="tab-btn active" onclick="showTab('tab-login')" data-i18n="tab_login" id="tb-login">Войти</button>
-        <button class="tab-btn" onclick="showTab('tab-reg')" data-i18n="tab_reg" id="tb-reg">Регистрация</button>
-        <button class="tab-btn" onclick="showTab('tab-otp')" data-i18n="tab_code" id="tb-otp">Код?</button>
-      </div>
-
-      <!-- Login -->
-      <div id="tab-login" class="tab-panel active">
-        <div class="form-group">
-          <label class="form-label" data-i18n="email">Email</label>
-          <input id="l-email" type="email" class="form-input" autocomplete="email" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" data-i18n="pass">Пароль</label>
-          <input id="l-pass" type="password" class="form-input" autocomplete="current-password" />
-        </div>
-        <div id="msg-login" class="msg" style="display:none"></div>
-        <button class="btn" onclick="doLogin()" data-i18n="btn_login">Войти</button>
-      </div>
-
-      <!-- Register -->
-      <div id="tab-reg" class="tab-panel">
-        <p class="form-hint" data-i18n="hint_reg">Введите код с приглашения</p>
-        <div class="form-group">
-          <label class="form-label" data-i18n="name">Имя и Фамилия</label>
-          <input id="r-name" type="text" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" data-i18n="email">Email</label>
-          <input id="r-email" type="email" class="form-input" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" data-i18n="pass">Пароль</label>
-          <input id="r-pass" type="password" class="form-input" autocomplete="new-password" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" data-i18n="code">Код свадьбы</label>
-          <input id="r-code" type="password" class="form-input" />
-        </div>
-        <div id="msg-reg" class="msg" style="display:none"></div>
-        <button class="btn" onclick="doRegister()" data-i18n="btn_reg">Создать аккаунт</button>
-      </div>
-
-      <!-- OTP -->
-      <div id="tab-otp" class="tab-panel">
-        <p class="form-hint" data-i18n="hint_otp">Email для восстановления</p>
-        <div class="form-group">
-          <label class="form-label" data-i18n="email">Email</label>
-          <input id="o-email" type="email" class="form-input" />
-        </div>
-        <div id="msg-otp" class="msg" style="display:none"></div>
-        <button class="btn btn-outline btn-sm" onclick="sendOTP()" data-i18n="btn_get_code">Получить код</button>
-        <div class="form-group" style="margin-top:18px">
-          <label class="form-label" data-i18n="hint_otp_code">Код из письма</label>
-          <input id="o-code" type="text" class="form-input" maxlength="6" />
-        </div>
-        <button class="btn btn-sm" onclick="verifyOTP()" data-i18n="btn_enter_code">Войти по коду</button>
-      </div>
-
+  <!-- Gallery -->
+  <div class="gallery-grid reveal">
+    <!-- Wide: couple -->
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80" alt="Wedding couple" loading="lazy" />
+      <div class="photo-overlay"></div>
     </div>
-  </div><!-- /auth-section -->
-
-  <!-- Dashboard section -->
-  <div id="dashboard-section" style="display:none">
-
-    <p class="welcome-text">
-      <span data-i18n="welcome">Добро пожаловать</span>,
-      <strong id="guest-name">—</strong>! 🤍
-    </p>
-
-    <div class="card">
-      <div class="tabs">
-        <button class="tab-btn active" onclick="showDashTab('dt-prog')" data-i18n="menu_prog" id="dtb-prog">Программа</button>
-        <button class="tab-btn" onclick="showDashTab('dt-map')" data-i18n="menu_map" id="dtb-map">Карта</button>
-        <button class="tab-btn" onclick="showDashTab('dt-rsvp')" data-i18n="menu_rsvp" id="dtb-rsvp">Анкета</button>
-        <button class="tab-btn" onclick="showDashTab('dt-prof')" data-i18n="menu_prof" id="dtb-prof">Профиль</button>
-      </div>
-
-      <!-- Program -->
-      <div id="dt-prog" class="tab-panel active">
-        <div class="program-item"><span class="prog-time">14:00</span><span class="prog-event" data-i18n="prog_1">Сбор гостей</span></div>
-        <div class="program-item"><span class="prog-time">15:00</span><span class="prog-event" data-i18n="prog_2">Церемония бракосочетания</span></div>
-        <div class="program-item"><span class="prog-time">17:00</span><span class="prog-event" data-i18n="prog_3">Праздничный банкет</span></div>
-        <div class="program-item"><span class="prog-time">23:00</span><span class="prog-event" data-i18n="prog_4">Завершение вечера</span></div>
-        <img src="https://images.unsplash.com/photo-1519225421980-715cb0202128?auto=format&fit=crop&w=800&q=80" alt="Wedding" style="width:100%;border-radius:14px;margin-top:20px;" />
-      </div>
-
-      <!-- Map -->
-      <div id="dt-map" class="tab-panel">
-        <img
-          src="https://static.maps.2gis.com/1.0?center=71.419786,42.923482&zoom=16&size=600,300"
-          alt="Map"
-          class="map-img"
-        />
-        <a href="https://2gis.kz/taraz/firm/70000001100842703" target="_blank" rel="noopener" class="btn-map">
-          📍 <span data-i18n="open_map">Открыть в 2GIS</span>
-        </a>
-      </div>
-
-      <!-- RSVP -->
-      <div id="dt-rsvp" class="tab-panel">
-        <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:16px;" data-i18n="rsvp_q">Будете ли вы с нами?</p>
-        <div class="form-group rsvp-select-wrap">
-          <select id="rsvp-status" class="form-select"></select>
-        </div>
-        <div class="form-group">
-          <label class="form-label" data-i18n="rsvp_food">Аллергии / Пожелания</label>
-          <textarea id="rsvp-food" class="form-textarea"></textarea>
-        </div>
-        <div id="msg-rsvp" class="msg" style="display:none"></div>
-        <button class="btn" onclick="doRSVP()" data-i18n="btn_save">Отправить ответ</button>
-      </div>
-
-      <!-- Profile -->
-      <div id="dt-prof" class="tab-panel">
-        <details class="profile-section">
-          <summary data-i18n="change_pass">Сменить пароль</summary>
-          <div style="padding-top:16px">
-            <div class="form-group">
-              <label class="form-label" data-i18n="new_pass">Новый пароль</label>
-              <input id="p-newpass" type="password" class="form-input" autocomplete="new-password" />
-            </div>
-            <div id="msg-pass" class="msg" style="display:none"></div>
-            <button class="btn btn-sm" onclick="doChangePass()" data-i18n="btn_save_pass">Сохранить</button>
-          </div>
-        </details>
-        <button class="btn btn-outline" onclick="doLogout()" data-i18n="btn_logout">Выйти</button>
-      </div>
-
+    <!-- White gold rings -->
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80" alt="Wedding rings" loading="lazy" />
+      <div class="photo-overlay"></div>
     </div>
-  </div><!-- /dashboard-section -->
+    <!-- Mountains / Kazakhstan landscape -->
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80" alt="Landscape" loading="lazy" />
+      <div class="photo-overlay"></div>
+    </div>
+    <!-- Ornate floral / decoration -->
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=800&q=80" alt="Decoration" loading="lazy" />
+      <div class="photo-overlay"></div>
+    </div>
+    <!-- Wedding flowers / bouquet -->
+    <div class="gallery-item" onclick="openLightbox(this)">
+      <img src="https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=800&q=80" alt="Bouquet" loading="lazy" />
+      <div class="photo-overlay"></div>
+    </div>
+  </div>
+
+  <!-- Program -->
+  <div class="card reveal">
+    <div class="card-title" data-i18n="menu_prog">Бағдарлама</div>
+    <div class="program-item"><span class="prog-time">7:00</span><span class="prog-event" data-i18n="prog_1">Қонақтардың жиналуы</span></div>
+    <div class="program-item"><span class="prog-time">8:00</span><span class="prog-event" data-i18n="prog_2">Мерекенің басталуы</span></div>
+    <div class="program-item"><span class="prog-time">12:00</span><span class="prog-event" data-i18n="prog_3">Кештің аяқталуы</span></div>
+  </div>
+
+  <!-- Transport -->
+  <div class="card reveal">
+    <div class="card-title" data-i18n="menu_transport">Тараз қалай жетуге болады</div>
+    <div class="transport-tabs">
+      <button class="ttab-btn active" onclick="showTTab('tt-astana', this)" data-i18n="city_astana">Астана</button>
+      <button class="ttab-btn" onclick="showTTab('tt-almaty', this)" data-i18n="city_almaty">Алматы</button>
+      <button class="ttab-btn" onclick="showTTab('tt-aus', this)" data-i18n="city_aus">Австралия</button>
+    </div>
+
+    <!-- Astana -->
+    <div id="tt-astana" class="ttab-panel active">
+      <div class="transport-option">
+        <div class="t-icon">🚗</div>
+        <div class="t-body">
+          <div class="t-mode" data-i18n="t_car">Машинамен</div>
+          <div class="t-detail" data-i18n="t_astana_car">А1 тас жолы арқылы (Астана → Қарағанды → Шымкент → Тараз), ~1 200 км, шамамен 12–14 сағат.</div>
+        </div>
+      </div>
+      <div class="transport-option">
+        <div class="t-icon">🚂</div>
+        <div class="t-body">
+          <div class="t-mode" data-i18n="t_train">Поездпен (ҚТЖ)</div>
+          <div class="t-detail" data-i18n="t_astana_train">Астана – Тараз бағыты бойынша тікелей немесе ауыспалы пойыздар. Жол ~20–22 сағат. <a class="t-link" href="https://tickets.railways.kz" target="_blank" rel="noopener">tickets.railways.kz</a></div>
+        </div>
+      </div>
+      <div class="transport-option">
+        <div class="t-icon">✈️</div>
+        <div class="t-body">
+          <div class="t-mode" data-i18n="t_plane">Ұшақпен (Scat)</div>
+          <div class="t-detail" data-i18n="t_astana_plane">Астана → Тараз немесе Шымкент ұшақпен ~1,5 сағат. <a class="t-link" href="https://www.scat.kz" target="_blank" rel="noopener">scat.kz — билет сатып алу</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Almaty -->
+    <div id="tt-almaty" class="ttab-panel">
+      <div class="transport-option">
+        <div class="t-icon">🚗</div>
+        <div class="t-body">
+          <div class="t-mode" data-i18n="t_car">Машинамен</div>
+          <div class="t-detail" data-i18n="t_almaty_car">М39 / Е40 тас жолы арқылы (Алматы → Тараз), ~650 км, шамамен 6–7 сағат.</div>
+        </div>
+      </div>
+      <div class="transport-option">
+        <div class="t-icon">🚂</div>
+        <div class="t-body">
+          <div class="t-mode" data-i18n="t_train">Поездпен (ҚТЖ)</div>
+          <div class="t-detail" data-i18n="t_almaty_train">Алматы – Шымкент бағытындағы пойыздар Таразда аялдайды. Жол ~7–8 сағат. <a class="t-link" href="https://tickets.railways.kz" target="_blank" rel="noopener">tickets.railways.kz</a></div>
+        </div>
+      </div>
+      <div class="transport-option">
+        <div class="t-icon">✈️</div>
+        <div class="t-body">
+          <div class="t-mode" data-i18n="t_plane">Ұшақпен (Scat)</div>
+          <div class="t-detail" data-i18n="t_almaty_plane">Алматы → Тараз ұшақпен ~1 сағат. <a class="t-link" href="https://www.scat.kz" target="_blank" rel="noopener">scat.kz — билет сатып алу</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Australia -->
+    <div id="tt-aus" class="ttab-panel">
+      <div class="transport-option">
+        <div class="t-icon">✈️</div>
+        <div class="t-body">
+          <div class="t-mode" data-i18n="t_intl_flight">Халықаралық рейс</div>
+          <div class="t-detail" data-i18n="t_aus_detail">Австралиядан Алматыға немесе Астанаға ауысумен ұшуға болады (Дубай, Сингапур, Стамбул арқылы). Одан әрі Тараз қалаға — жоғарыдағы нұсқаулар бойынша.</div>
+        </div>
+      </div>
+      <div class="transport-option">
+        <div class="t-icon">💡</div>
+        <div class="t-body">
+          <div class="t-mode" data-i18n="t_tip">Кеңес</div>
+          <div class="t-detail" data-i18n="t_aus_tip">Алматыға жеткен соң Scat рейсімен Таразға ұшу (~1 сағат). <a class="t-link" href="https://www.scat.kz" target="_blank" rel="noopener">scat.kz</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Map -->
+  <div class="card reveal">
+    <div class="card-title" data-i18n="menu_map">Той өтетін жер</div>
+    <img src="https://static.maps.2gis.com/1.0?center=71.419786,42.923482&zoom=16&size=600,300" alt="Map" class="map-img" />
+    <a href="https://2gis.kz/taraz/firm/70000001100842703" target="_blank" rel="noopener" class="btn-map">
+      📍 <span data-i18n="open_map">2GIS-те ашу</span>
+    </a>
+  </div>
+
+  <!-- RSVP -->
+  <div class="card reveal">
+    <div class="card-title" data-i18n="menu_rsvp">Қонақ анкетасы</div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-bottom:20px;text-align:center;" data-i18n="rsvp_q">Тойға келесіз бе?</p>
+    <div class="form-group">
+      <label class="form-label" data-i18n="name">Аты-жөні</label>
+      <input id="rsvp-name" type="text" class="form-input" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="guests_count_label">Қанша адам келеді</label>
+      <select id="rsvp-count" class="form-select">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6+</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="rsvp_attendance">Жауабыңыз</label>
+      <select id="rsvp-status" class="form-select"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label" data-i18n="rsvp_food">Аллергия / Тілектер</label>
+      <textarea id="rsvp-food" class="form-textarea"></textarea>
+    </div>
+    <div id="msg-rsvp" class="msg" style="display:none"></div>
+    <button class="btn" onclick="doRSVP()" data-i18n="btn_save">Жіберу</button>
+  </div>
 
 </div><!-- /app -->
 
 <script>
-// ── Translations ────────────────────────────────────────────────────────
 const RSVP_RU = ['Я приду', 'Не смогу', 'Думаю'];
 
 const T = {
-  ru: {
-    title: 'Малика & Бейбарыс', header: 'Приглашаем на свадьбу',
-    date_str: '08 | 08 | 2026',
-    days: 'Дней', hours: 'Часов', mins: 'Минут', secs: 'Секунд',
-    login_header: 'Вход для гостей',
-    tab_login: 'Войти', tab_reg: 'Регистрация', tab_code: 'Код?',
-    email: 'Email', pass: 'Пароль', name: 'Имя и Фамилия', code: 'Код свадьбы',
-    btn_login: 'Войти', btn_reg: 'Создать аккаунт',
-    btn_get_code: 'Получить код', btn_enter_code: 'Войти по коду',
-    hint_reg: 'Введите код с приглашения', hint_otp: 'Email для восстановления',
-    hint_otp_code: 'Код из письма',
-    welcome: 'Добро пожаловать',
-    menu_prog: 'Программа', menu_map: 'Карта', menu_rsvp: 'Анкета (RSVP)', menu_prof: 'Профиль',
-    prog_1: 'Сбор гостей', prog_2: 'Церемония бракосочетания',
-    prog_3: 'Праздничный банкет', prog_4: 'Завершение вечера',
-    rsvp_q: 'Будете ли вы с нами?', rsvp_food: 'Аллергии / Пожелания',
-    btn_save: 'Отправить ответ', btn_logout: 'Выйти',
-    change_pass: 'Сменить пароль', new_pass: 'Новый пароль', btn_save_pass: 'Сохранить',
-    success_reg: 'Регистрация успешна! Проверьте email.', err_user_exists: 'Пользователь уже существует.',
-    success_otp: 'Код отправлен на email!', success_login: 'Добро пожаловать!',
-    success_saved: 'Ответ сохранён!', success_pass: 'Пароль изменён!',
-    err_code: 'Неверный код свадьбы.', err_fields: 'Заполните все поля.',
-    open_map: 'Открыть в 2GIS',
-    splash_btn: 'Открыть приглашение',
-    rsvp_opts: ['Я приду', 'Не смогу', 'Думаю'],
-  },
   kz: {
-    title: 'Малика & Бейбарыс', header: 'Үйлену тойына шақырамыз',
-    date_str: '08 | 08 | 2026',
+    header: 'Үйлену тойына шақырамыз', date_str: '08 | 08 | 2026',
     days: 'Күн', hours: 'Сағат', mins: 'Минут', secs: 'Секунд',
-    login_header: 'Қонақтарға кіру',
-    tab_login: 'Кіру', tab_reg: 'Тіркелу', tab_code: 'Код?',
-    email: 'Email', pass: 'Құпия сөз', name: 'Аты-жөні', code: 'Той коды',
-    btn_login: 'Кіру', btn_reg: 'Тіркелу',
-    btn_get_code: 'Код алу', btn_enter_code: 'Кодпен кіру',
-    hint_reg: 'Шақырудағы кодты енгізіңіз', hint_otp: 'Email енгізіңіз',
-    hint_otp_code: 'Хаттағы код',
-    welcome: 'Қош келдіңіз',
-    menu_prog: 'Бағдарлама', menu_map: 'Карта', menu_rsvp: 'Жауап (RSVP)', menu_prof: 'Профиль',
-    prog_1: 'Қонақтардың жиналуы', prog_2: 'Неке қию рәсімі',
-    prog_3: 'Мерекелік банкет', prog_4: 'Кештің аяқталуы',
-    rsvp_q: 'Сіз келесіз бе?', rsvp_food: 'Аллергия / Тілектер',
-    btn_save: 'Жіберу', btn_logout: 'Шығу',
-    change_pass: 'Құпия сөзді өзгерту', new_pass: 'Жаңа құпия сөз', btn_save_pass: 'Сақтау',
-    success_reg: 'Тіркелу сәтті! Email тексеріңіз.', err_user_exists: 'Бұл қолданушы тіркелген.',
-    success_otp: 'Код жіберілді!', success_login: 'Қош келдіңіз!',
-    success_saved: 'Жауап сақталды!', success_pass: 'Құпия сөз өзгертілді!',
-    err_code: 'Той коды қате.', err_fields: 'Барлық өрісті толтырыңыз.',
-    open_map: '2GIS-те ашу',
-    splash_btn: 'Шақыруды ашу',
+    invite_title: 'Құрметті қонақтар!',
+    invite_body: 'Құрметті ағайын-туыс, апа-жезделер, нағашы-жиен, бөлелер, бауырлар, құда-жекжат, көршілер, достар мен әріптестер!\n\nСіздерді Бейбарыс пен Маликаның үйлену тойына арналған салтанатты дастарханымыздың қадірлі қонағы болуға шақырамыз!',
+    invite_closing: 'Тойдың сәні — сіздер! Қуанышымызға ортақ болыңыздар!',
+    quote: '«Бір-бірін тапқан екі жүрек — бақытты жанұяның негізі.»',
+    menu_prog: 'Бағдарлама', menu_map: 'Той өтетін жер', menu_rsvp: 'Қонақ анкетасы',
+    menu_transport: 'Тараз қалай жетуге болады',
+    city_astana: 'Астана', city_almaty: 'Алматы', city_aus: 'Австралия',
+    t_car: 'Машинамен', t_train: 'Поездпен (ҚТЖ)', t_plane: 'Ұшақпен (Scat)',
+    t_intl_flight: 'Халықаралық рейс', t_tip: 'Кеңес',
+    t_astana_car: 'А1 тас жолы арқылы (Астана → Қарағанды → Шымкент → Тараз), ~1 200 км, шамамен 12–14 сағат.',
+    t_astana_train: 'Астана – Тараз бағыты бойынша тікелей немесе ауыспалы пойыздар. Жол ~20–22 сағат.',
+    t_astana_plane: 'Астана → Тараз немесе Шымкент ұшақпен ~1,5 сағат.',
+    t_almaty_car: 'М39 / Е40 тас жолы арқылы (Алматы → Тараз), ~650 км, шамамен 6–7 сағат.',
+    t_almaty_train: 'Алматы – Шымкент бағытындағы пойыздар Таразда аялдайды. Жол ~7–8 сағат.',
+    t_almaty_plane: 'Алматы → Тараз ұшақпен ~1 сағат.',
+    t_aus_detail: 'Австралиядан Алматыға немесе Астанаға ауысумен ұшуға болады (Дубай, Сингапур, Стамбул арқылы). Одан әрі Тараз қалаға — жоғарыдағы нұсқаулар бойынша.',
+    t_aus_tip: 'Алматыға жеткен соң Scat рейсімен Таразға ұшу (~1 сағат).',
+    prog_1: 'Қонақтардың жиналуы', prog_2: 'Мерекенің басталуы', prog_3: 'Кештің аяқталуы',
+    rsvp_q: 'Сіз келесіз бе?', rsvp_attendance: 'Жауапты таңдаңыз:', rsvp_food: 'Аллергия / Тілектер',
+    guests_count_label: 'Қанша адам келесіздер?',
+    btn_save: 'Жіберу', open_map: '2GIS-те ашу', splash_btn: 'Шақыруды ашу',
     rsvp_opts: ['Мен келемін', 'Келе алмаймын', 'Ойланудамын'],
+    success_saved: 'Жауабыңыз қабылданды! Рахмет!', err_fields: 'Атыңызды енгізіңіз.',
+    name: 'Аты-жөніңіз',
+  },
+  ru: {
+    header: 'Приглашаем на свадьбу', date_str: '08 | 08 | 2026',
+    days: 'Дней', hours: 'Часов', mins: 'Минут', secs: 'Секунд',
+    invite_title: 'Уважаемые гости!',
+    invite_body: 'Дорогие родственники, старшие и близкие, братья и сёстры, дорогие соседи, друзья и коллеги!\n\nМы приглашаем вас разделить с нами радость и стать дорогими гостями на свадебном торжестве Бейбарыса и Малики!',
+    invite_closing: 'Украшение нашего праздника — это вы! Разделите с нами нашу радость!',
+    quote: '«Двое, нашедшие друг друга — основа счастливой семьи.»',
+    menu_prog: 'Программа', menu_map: 'Место проведения', menu_rsvp: 'Анкета гостя',
+    menu_transport: 'Как добраться до Тараза',
+    city_astana: 'Астана', city_almaty: 'Алматы', city_aus: 'Австралия',
+    t_car: 'На машине', t_train: 'На поезде (КТЖ)', t_plane: 'На самолёте (Scat)',
+    t_intl_flight: 'Международный рейс', t_tip: 'Совет',
+    t_astana_car: 'Трасса А1 (Астана → Карагандa → Шымкент → Тараз), ~1 200 км, около 12–14 часов.',
+    t_astana_train: 'Прямые и пересадочные поезда по маршруту Астана – Тараз. В дороге ~20–22 часа.',
+    t_astana_plane: 'Астана → Тараз или Шымкент на самолёте ~1,5 часа.',
+    t_almaty_car: 'Трасса M39 / E40 (Алматы → Тараз), ~650 км, около 6–7 часов.',
+    t_almaty_train: 'Поезда Алматы – Шымкент останавливаются в Таразе. В дороге ~7–8 часов.',
+    t_almaty_plane: 'Алматы → Тараз на самолёте ~1 час.',
+    t_aus_detail: 'Из Австралии летите до Алматы или Астаны с пересадкой (через Дубай, Сингапур или Стамбул). Далее — в Тараз любым удобным способом.',
+    t_aus_tip: 'По прилёту в Алматы летите в Тараз рейсом Scat (~1 час).',
+    prog_1: 'Сбор гостей', prog_2: 'Начало мероприятия', prog_3: 'Завершение мероприятия',
+    rsvp_q: 'Будете ли вы с нами?', rsvp_attendance: 'Ваш ответ', rsvp_food: 'Аллергии / Пожелания',
+    guests_count_label: 'Количество гостей',
+    btn_save: 'Отправить ответ', open_map: 'Открыть в 2GIS', splash_btn: 'Открыть приглашение',
+    rsvp_opts: ['Я приду', 'Не смогу', 'Думаю'],
+    success_saved: 'Ответ сохранён! Спасибо!', err_fields: 'Пожалуйста, заполните имя.',
+    name: 'Имя и Фамилия',
   },
   en: {
-    title: 'Malika & Beibarys', header: 'Wedding Invitation',
-    date_str: 'August 08, 2026',
+    header: 'Wedding Invitation', date_str: 'August 08, 2026',
     days: 'Days', hours: 'Hours', mins: 'Minutes', secs: 'Seconds',
-    login_header: 'Guest Login',
-    tab_login: 'Log In', tab_reg: 'Register', tab_code: 'Code?',
-    email: 'Email', pass: 'Password', name: 'Full Name', code: 'Wedding Code',
-    btn_login: 'Log In', btn_reg: 'Sign Up',
-    btn_get_code: 'Get Code', btn_enter_code: 'Enter with Code',
-    hint_reg: 'Enter the code from your invitation', hint_otp: 'Recovery Email',
-    hint_otp_code: 'Code from email',
-    welcome: 'Welcome',
-    menu_prog: 'Program', menu_map: 'Venue', menu_rsvp: 'RSVP', menu_prof: 'Profile',
-    prog_1: 'Guest Arrival', prog_2: 'Wedding Ceremony',
-    prog_3: 'Reception Banquet', prog_4: 'Closing',
-    rsvp_q: 'Will you attend?', rsvp_food: 'Allergies / Preferences',
-    btn_save: 'Submit', btn_logout: 'Log Out',
-    change_pass: 'Change Password', new_pass: 'New Password', btn_save_pass: 'Save',
-    success_reg: 'Registration successful! Check your email.', err_user_exists: 'User already exists.',
-    success_otp: 'Code sent to your email!', success_login: 'Welcome!',
-    success_saved: 'Response saved!', success_pass: 'Password changed!',
-    err_code: 'Invalid wedding code.', err_fields: 'Please fill in all fields.',
-    open_map: 'Open in 2GIS',
-    splash_btn: 'Open Invitation',
+    invite_title: 'Dear Guests,',
+    invite_body: 'Dear family, relatives, brothers and sisters, neighbours, friends and colleagues!\n\nWe warmly invite you to join us as honoured guests at the wedding celebration of Beibarys and Malika!',
+    invite_closing: 'Your presence is the greatest gift. Please share in our joy!',
+    quote: '"Two souls who found each other — the foundation of a happy family."',
+    menu_prog: 'Program', menu_map: 'Venue', menu_rsvp: 'RSVP',
+    menu_transport: 'Getting to Taraz',
+    city_astana: 'Astana', city_almaty: 'Almaty', city_aus: 'Australia',
+    t_car: 'By car', t_train: 'By train (KTZ)', t_plane: 'By plane (Scat)',
+    t_intl_flight: 'International flight', t_tip: 'Tip',
+    t_astana_car: 'Highway A1 (Astana → Karaganda → Shymkent → Taraz), ~1,200 km, approx. 12–14 hours.',
+    t_astana_train: 'Direct or connecting trains on the Astana – Taraz route. Journey ~20–22 hours.',
+    t_astana_plane: 'Astana → Taraz or Shymkent by plane ~1.5 hours.',
+    t_almaty_car: 'Highway M39 / E40 (Almaty → Taraz), ~650 km, approx. 6–7 hours.',
+    t_almaty_train: 'Almaty – Shymkent trains stop in Taraz. Journey ~7–8 hours.',
+    t_almaty_plane: 'Almaty → Taraz by plane ~1 hour.',
+    t_aus_detail: 'Fly from Australia to Almaty or Astana with a stopover (via Dubai, Singapore or Istanbul). Then continue to Taraz using any option above.',
+    t_aus_tip: 'Once in Almaty, fly to Taraz with Scat (~1 hour).',
+    prog_1: 'Guest Arrival', prog_2: 'Start of Celebration', prog_3: 'Closing',
+    rsvp_q: 'Will you attend?', rsvp_attendance: 'Your response', rsvp_food: 'Allergies / Preferences',
+    guests_count_label: 'Number of guests',
+    btn_save: 'Submit', open_map: 'Open in 2GIS', splash_btn: 'Open Invitation',
     rsvp_opts: ['I will attend', 'Cannot attend', 'Still thinking'],
+    success_saved: 'Response saved! Thank you!', err_fields: 'Please enter your name.',
+    name: 'Full Name',
   },
 };
 
-// ── State ────────────────────────────────────────────────────────────────
-let lang = 'ru';
-let guestData = null;
+let lang = 'kz';
 let musicPlaying = false;
 
-// ── Splash & Music ───────────────────────────────────────────────────────
+// ── Splash ──
 function enterSite() {
-  // Play music
   const music = document.getElementById('bg-music');
   music.volume = 0.35;
   music.play().catch(() => {});
@@ -660,12 +541,10 @@ function enterSite() {
   document.getElementById('music-btn').style.display = 'block';
   updateMusicBtn();
 
-  // Hide splash
   const splash = document.getElementById('splash');
   splash.classList.add('hidden');
   setTimeout(() => { splash.style.display = 'none'; }, 900);
 
-  // Show main app
   const app = document.getElementById('app');
   app.style.display = 'block';
   app.style.opacity = '0';
@@ -673,12 +552,9 @@ function enterSite() {
   app.style.transition = 'opacity .8s ease, transform .8s ease';
   requestAnimationFrame(() => { app.style.opacity = '1'; app.style.transform = 'translateY(0)'; });
 
-  // Start countdown & petals
   startCountdown();
   spawnPetals();
-
-  // Check session
-  checkSession();
+  initReveal();
 }
 
 function toggleMusic() {
@@ -691,224 +567,169 @@ function updateMusicBtn() {
   const btn = document.getElementById('music-btn');
   btn.textContent = musicPlaying ? '♪' : '♩';
   btn.classList.toggle('paused', !musicPlaying);
-  btn.title = musicPlaying ? 'Pause music' : 'Play music';
 }
 
-// ── Petals ───────────────────────────────────────────────────────────────
+// ── Petals ──
 function spawnPetals() {
   const container = document.getElementById('petals');
-  const symbols = ['🌸','🌺','🌹','✿','❀','🌼'];
-  for (let i = 0; i < 18; i++) {
+  const symbols = ['✿','❀','✦','❖'];
+  for (let i = 0; i < 14; i++) {
     const p = document.createElement('span');
     p.className = 'petal';
     p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
     p.style.left = Math.random() * 100 + 'vw';
-    p.style.animationDuration = (8 + Math.random() * 10) + 's';
-    p.style.animationDelay = (Math.random() * 12) + 's';
-    p.style.fontSize = (.8 + Math.random() * .8) + 'rem';
+    p.style.animationDuration = (10 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 14) + 's';
+    p.style.fontSize = (.7 + Math.random() * .7) + 'rem';
+    p.style.color = '#C9A96E';
+    p.style.opacity = '0';
     container.appendChild(p);
   }
 }
 
-// ── Countdown ────────────────────────────────────────────────────────────
-function startCountdown() {
-  function tick() {
-    const target = new Date('2026-08-08T17:00:00');
-    const now = new Date();
-    const diff = target - now;
-    if (diff <= 0) return;
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    document.getElementById('cd-days').textContent  = String(d);
-    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
-    document.getElementById('cd-mins').textContent  = String(m).padStart(2,'0');
-    document.getElementById('cd-secs').textContent  = String(s).padStart(2,'0');
-  }
-  tick();
-  setInterval(tick, 1000);
+// ── Scroll reveal ──
+function initReveal() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 }
 
-// ── Language ─────────────────────────────────────────────────────────────
+// ── Countdown ──
+function startCountdown() {
+  function tick() {
+    const diff = new Date('2026-08-08T08:00:00') - new Date();
+    if (diff <= 0) return;
+    document.getElementById('cd-days').textContent  = String(Math.floor(diff / 86400000));
+    document.getElementById('cd-hours').textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0');
+    document.getElementById('cd-mins').textContent  = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
+    document.getElementById('cd-secs').textContent  = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
+  }
+  tick(); setInterval(tick, 1000);
+}
+
+// ── Language ──
 function setLang(l) {
   lang = l;
   document.querySelectorAll('.lang-btn').forEach(b => {
-    const codes = { ҚАЗ:'kz', РУС:'ru', ENG:'en' };
-    b.classList.toggle('active', codes[b.textContent] === l);
+    const map = { ҚАЗ:'kz', РУС:'ru', ENG:'en' };
+    b.classList.toggle('active', map[b.textContent] === l);
   });
-  // Update all data-i18n elements
+
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.dataset.i18n;
-    if (T[l][key]) el.textContent = T[l][key];
-  });
-  // Splash
-  document.getElementById('splash-btn-text').textContent = T[l]['splash_btn'];
-  // RSVP select
-  refreshRSVPSelect();
-}
-
-// ── Tabs ─────────────────────────────────────────────────────────────────
-function showTab(id) {
-  document.querySelectorAll('#auth-section .tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('#auth-section .tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  event.currentTarget.classList.add('active');
-}
-function showDashTab(id) {
-  document.querySelectorAll('#dashboard-section .tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('#dashboard-section .tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  event.currentTarget.classList.add('active');
-}
-
-// ── Session ───────────────────────────────────────────────────────────────
-async function checkSession() {
-  try {
-    const res = await fetch('/api/me');
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success) {
-        guestData = data;
-        showDashboard(data);
-        return;
-      }
+    const val = T[l][key];
+    if (!val) return;
+    // handle newlines in invite_body
+    if (key === 'invite_body') {
+      el.innerHTML = val.replace(/\n\n/g, '<br><br>');
+    } else {
+      el.textContent = val;
     }
-  } catch (_) {}
-  showAuth();
-}
-
-function showAuth() {
-  document.getElementById('auth-section').style.display = 'block';
-  document.getElementById('dashboard-section').style.display = 'none';
-}
-
-function showDashboard(data) {
-  document.getElementById('auth-section').style.display = 'none';
-  document.getElementById('dashboard-section').style.display = 'block';
-  document.getElementById('guest-name').textContent = data.full_name || 'Guest';
-  // Pre-fill RSVP
-  refreshRSVPSelect();
-  const statusIdx = RSVP_RU.indexOf(data.attendance_status);
-  if (statusIdx >= 0) document.getElementById('rsvp-status').selectedIndex = statusIdx;
-  document.getElementById('rsvp-food').value = data.food_preference || '';
-}
-
-// ── Safe fetch helper ──────────────────────────────────────────────────────
-async function apiFetch(url, options = {}) {
-  const res = await fetch(url, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
   });
-  const text = await res.text();
-  try {
-    return JSON.parse(text);
-  } catch {
-    // Server returned non-JSON (HTML error page) — show raw status
-    return { success: false, error: `Server error ${res.status}: ${text.slice(0, 120)}` };
+
+  // Re-render transport tabs with translated link text preserved
+  renderTransportTabs(l);
+  document.getElementById('splash-btn-text').textContent = T[l].splash_btn;
+  refreshRSVPSelect();
+}
+
+function renderTransportTabs(l) {
+  const t = T[l];
+  const links = {
+    ktz: `<a class="t-link" href="https://tickets.railways.kz" target="_blank" rel="noopener">tickets.railways.kz</a>`,
+    scat: `<a class="t-link" href="https://www.scat.kz" target="_blank" rel="noopener">scat.kz</a>`,
+  };
+
+  const panels = {
+    'tt-astana': `
+      <div class="transport-option"><div class="t-icon">🚗</div><div class="t-body"><div class="t-mode">${t.t_car}</div><div class="t-detail">${t.t_astana_car}</div></div></div>
+      <div class="transport-option"><div class="t-icon">🚂</div><div class="t-body"><div class="t-mode">${t.t_train}</div><div class="t-detail">${t.t_astana_train} ${links.ktz}</div></div></div>
+      <div class="transport-option"><div class="t-icon">✈️</div><div class="t-body"><div class="t-mode">${t.t_plane}</div><div class="t-detail">${t.t_astana_plane} ${links.scat}</div></div></div>`,
+    'tt-almaty': `
+      <div class="transport-option"><div class="t-icon">🚗</div><div class="t-body"><div class="t-mode">${t.t_car}</div><div class="t-detail">${t.t_almaty_car}</div></div></div>
+      <div class="transport-option"><div class="t-icon">🚂</div><div class="t-body"><div class="t-mode">${t.t_train}</div><div class="t-detail">${t.t_almaty_train} ${links.ktz}</div></div></div>
+      <div class="transport-option"><div class="t-icon">✈️</div><div class="t-body"><div class="t-mode">${t.t_plane}</div><div class="t-detail">${t.t_almaty_plane} ${links.scat}</div></div></div>`,
+    'tt-aus': `
+      <div class="transport-option"><div class="t-icon">✈️</div><div class="t-body"><div class="t-mode">${t.t_intl_flight}</div><div class="t-detail">${t.t_aus_detail}</div></div></div>
+      <div class="transport-option"><div class="t-icon">💡</div><div class="t-body"><div class="t-mode">${t.t_tip}</div><div class="t-detail">${t.t_aus_tip} ${links.scat}</div></div></div>`,
+  };
+
+  for (const [id, html] of Object.entries(panels)) {
+    document.getElementById(id).innerHTML = html;
   }
 }
 
-// ── Auth actions ──────────────────────────────────────────────────────────
-async function doLogin() {
-  const email = document.getElementById('l-email').value.trim();
-  const password = document.getElementById('l-pass').value;
-  if (!email || !password) return showMsg('msg-login', T[lang].err_fields, false);
-  try {
-    const data = await apiFetch('/api/login', { method: 'POST', body: JSON.stringify({ email, password }) });
-    if (data.success) { guestData = data; showDashboard(data); }
-    else showMsg('msg-login', data.error || 'Error', false);
-  } catch (e) { showMsg('msg-login', String(e), false); }
+// ── Transport tabs ──
+function showTTab(id, btn) {
+  document.querySelectorAll('.ttab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ttab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
 }
 
-async function doRegister() {
-  const name  = document.getElementById('r-name').value.trim();
-  const email = document.getElementById('r-email').value.trim();
-  const pass  = document.getElementById('r-pass').value;
-  const code  = document.getElementById('r-code').value;
-  if (!name || !email || !pass || !code) return showMsg('msg-reg', T[lang].err_fields, false);
-  try {
-    const data = await apiFetch('/api/register', { method: 'POST', body: JSON.stringify({ name, email, password: pass, wedding_code: code }) });
-    if (data.success) { showMsg('msg-reg', T[lang].success_reg, true); }
-    else if (data.error === 'invalid_code') { showMsg('msg-reg', T[lang].err_code, false); }
-    else if (data.error === 'user_exists') { showMsg('msg-reg', T[lang].err_user_exists, false); }
-    else { showMsg('msg-reg', data.error || 'Error', false); }
-  } catch (e) { showMsg('msg-reg', String(e), false); }
+// ── Lightbox ──
+function openLightbox(item) {
+  document.getElementById('lb-img').src = item.querySelector('img').src;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
-
-async function sendOTP() {
-  const email = document.getElementById('o-email').value.trim();
-  if (!email) return showMsg('msg-otp', T[lang].err_fields, false);
-  try {
-    const data = await apiFetch('/api/otp/send', { method: 'POST', body: JSON.stringify({ email }) });
-    showMsg('msg-otp', data.success ? T[lang].success_otp : (data.error || 'Error'), data.success);
-  } catch (e) { showMsg('msg-otp', String(e), false); }
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
 }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-async function verifyOTP() {
-  const email = document.getElementById('o-email').value.trim();
-  const token = document.getElementById('o-code').value.trim();
-  if (!email || !token) return showMsg('msg-otp', T[lang].err_fields, false);
-  try {
-    const data = await apiFetch('/api/otp/verify', { method: 'POST', body: JSON.stringify({ email, token }) });
-    if (data.success) { guestData = data; showDashboard(data); }
-    else showMsg('msg-otp', data.error || 'Invalid code', false);
-  } catch (e) { showMsg('msg-otp', String(e), false); }
-}
-
-async function doLogout() {
-  await fetch('/api/logout', { method:'POST' });
-  guestData = null;
-  showAuth();
-}
-
-// ── RSVP ──────────────────────────────────────────────────────────────────
+// ── RSVP ──
 function refreshRSVPSelect() {
   const sel = document.getElementById('rsvp-status');
   if (!sel) return;
-  const opts = T[lang].rsvp_opts;
-  const curIdx = sel.selectedIndex >= 0 ? sel.selectedIndex : 2;
+  const cur = sel.selectedIndex >= 0 ? sel.selectedIndex : 0;
   sel.innerHTML = '';
-  opts.forEach((opt, i) => {
+  T[lang].rsvp_opts.forEach((opt, i) => {
     const o = document.createElement('option');
-    o.value = RSVP_RU[i];  // always store Russian value
+    o.value = RSVP_RU[i];
     o.textContent = opt;
     sel.appendChild(o);
   });
-  sel.selectedIndex = curIdx;
+  sel.selectedIndex = cur;
 }
 
 async function doRSVP() {
-  const status = document.getElementById('rsvp-status').value;
-  const food = document.getElementById('rsvp-food').value;
+  const name         = document.getElementById('rsvp-name').value.trim();
+  const guests_count = document.getElementById('rsvp-count').value;
+  const status       = document.getElementById('rsvp-status').value;
+  const food         = document.getElementById('rsvp-food').value;
+  if (!name) return showMsg('msg-rsvp', T[lang].err_fields, false);
   try {
-    const data = await apiFetch('/api/rsvp', { method: 'POST', body: JSON.stringify({ status, food }) });
+    const res = await fetch('/api/rsvp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, guests_count, status, food }),
+    });
+    let data;
+    try { data = await res.json(); } catch { data = { success: false }; }
     showMsg('msg-rsvp', data.success ? T[lang].success_saved : (data.error || 'Error'), data.success);
+    if (data.success) {
+      document.getElementById('rsvp-name').value = '';
+      document.getElementById('rsvp-food').value = '';
+    }
   } catch (e) { showMsg('msg-rsvp', String(e), false); }
 }
 
-async function doChangePass() {
-  const password = document.getElementById('p-newpass').value;
-  if (!password) return showMsg('msg-pass', T[lang].err_fields, false);
-  try {
-    const data = await apiFetch('/api/change-password', { method: 'POST', body: JSON.stringify({ password }) });
-    showMsg('msg-pass', data.success ? T[lang].success_pass : (data.error || 'Error'), data.success);
-  } catch (e) { showMsg('msg-pass', String(e), false); }
-}
-
-// ── UI helpers ────────────────────────────────────────────────────────────
 function showMsg(id, text, ok) {
   const el = document.getElementById(id);
-  if (!el) return;
   el.textContent = text;
   el.className = 'msg ' + (ok ? 'msg-success' : 'msg-error');
   el.style.display = 'block';
   setTimeout(() => { el.style.display = 'none'; }, 5000);
 }
 
-// Initialize RSVP select on load
 document.addEventListener('DOMContentLoaded', () => {
   refreshRSVPSelect();
+  renderTransportTabs('kz');
 });
 </script>
 </body>

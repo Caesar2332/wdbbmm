@@ -10,9 +10,10 @@ import os
 
 load_dotenv()
 
-SUPABASE_URL = os.getenv("SUPABASE_URL", "")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")
-WEDDING_CODE = os.getenv("WEDDING_CODE", "")
+SUPABASE_URL         = os.getenv("SUPABASE_URL", "")
+SUPABASE_KEY         = os.getenv("SUPABASE_KEY", "")
+SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY", "")
+WEDDING_CODE         = os.getenv("WEDDING_CODE", "")
 
 app = FastAPI(title="Wedding Invitation — Малика & Бейбарыс")
 
@@ -32,10 +33,11 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
-def get_supabase(access_token: str = None, refresh_token: str = None) -> Client:
+def get_supabase(access_token: str = None, refresh_token: str = None, service: bool = False) -> Client:
+    key = SUPABASE_SERVICE_KEY if (service and SUPABASE_SERVICE_KEY) else SUPABASE_KEY
     client = create_client(
         SUPABASE_URL,
-        SUPABASE_KEY,
+        key,
         options=ClientOptions(
             postgrest_client_timeout=60,
             storage_client_timeout=60,
@@ -181,22 +183,21 @@ async def get_me(
 
 
 @app.post("/api/rsvp")
-async def update_rsvp(
-    request: Request,
-    access_token: Optional[str] = Cookie(None),
-    refresh_token: Optional[str] = Cookie(None),
-):
-    if not access_token:
-        return JSONResponse(status_code=401, content={"success": False})
+async def update_rsvp(request: Request):
     try:
         body = await request.json()
-        sb = get_supabase(access_token, refresh_token)
-        u_resp = sb.auth.get_user(access_token)
-        if not (u_resp and u_resp.user):
-            return JSONResponse(status_code=401, content={"success": False})
-        sb.table("guests").update(
-            {"attendance_status": body["status"], "food_preference": body["food"]}
-        ).eq("id", u_resp.user.id).execute()
+        name = body.get("name", "").strip()
+        if not name:
+            return JSONResponse(status_code=400, content={"success": False, "error": "name_required"})
+        sb = get_supabase(service=True)
+        sb.table("guests").insert(
+            {
+                "full_name": name,
+                "attendance_status": body.get("status", "Думаю"),
+                "food_preference": body.get("food", ""),
+                "guests_count": int(body.get("guests_count", 1)),
+            }
+        ).execute()
         return {"success": True}
     except Exception as e:
         return JSONResponse(status_code=400, content={"success": False, "error": str(e)})
