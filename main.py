@@ -15,7 +15,7 @@ SUPABASE_KEY         = os.getenv("SUPABASE_KEY", "")
 SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY", "")
 WEDDING_CODE         = os.getenv("WEDDING_CODE", "")
 
-app = FastAPI(title="Wedding Invitation — Малика & Бейбарыс")
+app = FastAPI(title="Wedding Invitation — Бейбарыс & Малика")
 
 
 @app.exception_handler(Exception)
@@ -71,7 +71,10 @@ async def health():
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(
+        request=request, 
+        name="index.html"
+    )
 
 
 # ── Auth API ───────────────────────────────────────────────────────────────
@@ -137,6 +140,7 @@ async def verify_otp(request: Request, response: Response):
         res = sb.auth.verify_otp(
             {"email": body["email"], "token": body["token"], "type": "email"}
         )
+        
         if res.user:
             _set_cookies(response, res.session.access_token, res.session.refresh_token)
             meta = res.user.user_metadata or {}
