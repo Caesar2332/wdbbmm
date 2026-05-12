@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Малика &amp; Бейбарыс — 08.08.2026</title>
+  <title>Бейбарыс &amp; Малика — 08.08.2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -81,7 +81,16 @@
     .reveal.visible { opacity: 1; transform: translateY(0); }
 
     /* Lang */
-    .lang-bar { display: flex; justify-content: flex-end; gap: 6px; padding: 20px 0 0; }
+    .lang-bar {
+      display: flex; justify-content: flex-end; gap: 6px;
+      position: sticky; top: 0; z-index: 50;
+      padding: 10px 20px;
+      background: rgba(253,248,240,0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(201,169,110,0.15);
+      margin: 0 -20px;
+    }
     .lang-btn {
       padding: 5px 14px; border-radius: 20px; border: 1px solid var(--gold);
       background: transparent; color: var(--gold-dark); font-family: 'Montserrat', sans-serif;
@@ -133,7 +142,7 @@
     .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
     .gallery-item { border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(61,50,40,0.1); position: relative; cursor: pointer; }
     .gallery-item:first-child { grid-column: 1 / -1; height: 240px; }
-    .gallery-item:not(:first-child) { height: 150px; }
+    .gallery-item:not(:first-child) { height: 290px; }
     .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; display: block; }
     .gallery-item:hover img { transform: scale(1.06); }
     .gallery-item .photo-overlay { position: absolute; inset: 0; background: rgba(61,50,40,0); transition: background .4s; }
@@ -178,8 +187,12 @@
 
     /* Map */
     .map-img { width: 100%; border-radius: 14px; margin-bottom: 16px; display: block; }
-    .btn-map { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: 50px; background: var(--gold); color: #fff; text-decoration: none; font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; letter-spacing: 2px; text-transform: uppercase; transition: all .3s; }
+    .map-buttons { display: flex; gap: 10px; }
+    .btn-map { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: 50px; background: var(--gold); color: #fff; text-decoration: none; font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; letter-spacing: 2px; text-transform: uppercase; transition: all .3s; }
     .btn-map:hover { background: var(--brown-dark); transform: translateY(-1px); }
+    .btn-map.gmap { background: var(--brown); }
+    .btn-map.gmap:hover { background: var(--brown-dark); }
+    @media (max-width: 480px) { .map-buttons { flex-direction: column; } }
 
     /* Form */
     .form-group { margin-bottom: 18px; }
@@ -199,7 +212,7 @@
       .cd-box { min-width: 60px; padding: 10px 12px; }
       .cd-num { font-size: 1.8rem; }
       .gallery-item:first-child { height: 190px; }
-      .gallery-item:not(:first-child) { height: 130px; }
+      .gallery-item:not(:first-child) { height: 230px; }
     }
   </style>
 </head>
@@ -221,7 +234,7 @@
 <div id="splash">
   <div class="splash-card">
     <span class="splash-ornament">✦ ❖ ✦</span>
-    <div class="splash-names" id="splash-names">Малика &amp; Бейбарыс</div>
+    <div class="splash-names" id="splash-names" data-i18n="names">Бейбарыс &amp; Малика</div>
     <div class="splash-date" id="splash-date">08 · 08 · 2026</div>
     <div class="splash-divider">── ✦ ──</div>
     <button class="btn-enter" onclick="enterSite()">
@@ -243,7 +256,7 @@
   <!-- Hero -->
   <section class="hero reveal">
     <p class="hero-subtitle" data-i18n="header">Үйлену тойына шақырамыз</p>
-    <h1 class="hero-title">Малика &amp; Бейбарыс</h1>
+    <h1 class="hero-title" data-i18n="names">Бейбарыс &amp; Малика</h1>
     <p class="hero-date" data-i18n="date_str">08 | 08 | 2026</p>
     <span class="floral">✦ ❖ ✦</span>
   </section>
@@ -251,7 +264,7 @@
   <!-- Hero photo -->
   <div class="hero-img-wrap reveal">
     <img
-      src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=1200&q=80"
+      src="/images/0.jpg"
       alt="Wedding"
       loading="lazy"
     />
@@ -286,27 +299,27 @@
   <div class="gallery-grid reveal">
     <!-- Wide: couple -->
     <div class="gallery-item" onclick="openLightbox(this)">
-      <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80" alt="Wedding couple" loading="lazy" />
+      <img src="/images/1.jpg" alt="Takeda Castle" loading="lazy" />
       <div class="photo-overlay"></div>
     </div>
     <!-- White gold rings -->
     <div class="gallery-item" onclick="openLightbox(this)">
-      <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80" alt="Wedding rings" loading="lazy" />
+      <img src="/images/2.jpg" alt="SushiRo Shinjuku" loading="lazy" />
       <div class="photo-overlay"></div>
     </div>
     <!-- Mountains / Kazakhstan landscape -->
     <div class="gallery-item" onclick="openLightbox(this)">
-      <img src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80" alt="Landscape" loading="lazy" />
+      <img src="/images/3.jpg" alt="Kii Katsura" loading="lazy" />
       <div class="photo-overlay"></div>
     </div>
     <!-- Ornate floral / decoration -->
     <div class="gallery-item" onclick="openLightbox(this)">
-      <img src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=800&q=80" alt="Decoration" loading="lazy" />
+      <img src="/images/4.jpg" alt="Shanghai Pearl" loading="lazy" />
       <div class="photo-overlay"></div>
     </div>
     <!-- Wedding flowers / bouquet -->
     <div class="gallery-item" onclick="openLightbox(this)">
-      <img src="https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=800&q=80" alt="Bouquet" loading="lazy" />
+      <img src="/images/5.jpg" alt="Universal Beijing" loading="lazy" />
       <div class="photo-overlay"></div>
     </div>
   </div>
@@ -314,9 +327,9 @@
   <!-- Program -->
   <div class="card reveal">
     <div class="card-title" data-i18n="menu_prog">Бағдарлама</div>
-    <div class="program-item"><span class="prog-time">7:00</span><span class="prog-event" data-i18n="prog_1">Қонақтардың жиналуы</span></div>
-    <div class="program-item"><span class="prog-time">8:00</span><span class="prog-event" data-i18n="prog_2">Мерекенің басталуы</span></div>
-    <div class="program-item"><span class="prog-time">12:00</span><span class="prog-event" data-i18n="prog_3">Кештің аяқталуы</span></div>
+    <div class="program-item"><span class="prog-time">19:00</span><span class="prog-event" data-i18n="prog_1">Қонақтардың жиналуы</span></div>
+    <div class="program-item"><span class="prog-time">20:00</span><span class="prog-event" data-i18n="prog_2">Мерекенің басталуы</span></div>
+    <div class="program-item"><span class="prog-time">22:00</span><span class="prog-event" data-i18n="prog_3">Кештің аяқталуы</span></div>
   </div>
 
   <!-- Transport -->
@@ -401,9 +414,14 @@
   <div class="card reveal">
     <div class="card-title" data-i18n="menu_map">Той өтетін жер</div>
     <img src="https://static.maps.2gis.com/1.0?center=71.419786,42.923482&zoom=16&size=600,300" alt="Map" class="map-img" />
-    <a href="https://2gis.kz/taraz/firm/70000001100842703" target="_blank" rel="noopener" class="btn-map">
-      📍 <span data-i18n="open_map">2GIS-ті ашу</span>
-    </a>
+    <div class="map-buttons">
+      <a href="https://2gis.kz/taraz/firm/70000001100842703" target="_blank" rel="noopener" class="btn-map">
+        📍 <span data-i18n="open_map">2GIS-те ашу</span>
+      </a>
+      <a href="https://www.google.com/maps/search/?api=1&query=42.923482,71.419786" target="_blank" rel="noopener" class="btn-map gmap">
+        🗺 <span data-i18n="open_gmap">Google Maps</span>
+      </a>
+    </div>
   </div>
 
   <!-- RSVP -->
@@ -444,6 +462,7 @@ const RSVP_RU = ['Я приду', 'Не смогу', 'Думаю'];
 
 const T = {
   kz: {
+    names: 'Бейбарыс & Малика',
     header: 'Үйлену тойына шақырамыз', date_str: '08 | 08 | 2026',
     days: 'Күн', hours: 'Сағат', mins: 'Минут', secs: 'Секунд',
     invite_title: 'Құрметті қонақтар!',
@@ -466,17 +485,18 @@ const T = {
     prog_1: 'Қонақтардың жиналуы', prog_2: 'Мерекенің басталуы', prog_3: 'Кештің аяқталуы',
     rsvp_q: 'Сіз келесіз бе?', rsvp_attendance: 'Жауапты таңдаңыз:', rsvp_food: 'Аллергия / Тілектер',
     guests_count_label: 'Қанша адам келесіздер?',
-    btn_save: 'Жіберу', open_map: '2GIS-те ашу', splash_btn: 'Шақыруды ашу',
+    btn_save: 'Жіберу', open_map: '2GIS-те ашу', open_gmap: 'Google Maps', splash_btn: 'Шақыруды ашу',
     rsvp_opts: ['Мен келемін', 'Келе алмаймын', 'Ойланудамын'],
     success_saved: 'Жауабыңыз қабылданды! Рахмет!', err_fields: 'Атыңызды енгізіңіз.',
     name: 'Аты-жөніңіз',
   },
   ru: {
+    names: 'Бейбарыс & Малика',
     header: 'Приглашаем на свадьбу', date_str: '08 | 08 | 2026',
     days: 'Дней', hours: 'Часов', mins: 'Минут', secs: 'Секунд',
     invite_title: 'Уважаемые гости!',
-    invite_body: 'Дорогие родственники, старшие и близкие, братья и сёстры, дорогие соседи, друзья и коллеги!\n\nМы приглашаем вас разделить с нами радость и стать дорогими гостями на свадебном торжестве Бейбарыса и Малики!',
-    invite_closing: 'Украшение нашего праздника — это вы! Разделите с нами нашу радость!',
+    invite_body: 'Дорогие родные и близкие, друзья и коллеги!\n\nМОт всей души приглашаем вас разделить с нами радость и стать гостями свадебного торжества Бейбарыса и Малики!',
+    invite_closing: 'Главное украшение нашего праздника — ваше присутствие и тёплые пожелания.',
     quote: '«Двое, нашедшие друг друга — основа счастливой семьи.»',
     menu_prog: 'Программа', menu_map: 'Место проведения', menu_rsvp: 'Анкета гостя',
     menu_transport: 'Как добраться до Тараза',
@@ -494,16 +514,17 @@ const T = {
     prog_1: 'Сбор гостей', prog_2: 'Начало мероприятия', prog_3: 'Завершение мероприятия',
     rsvp_q: 'Будете ли вы с нами?', rsvp_attendance: 'Ваш ответ', rsvp_food: 'Аллергии / Пожелания',
     guests_count_label: 'Количество гостей',
-    btn_save: 'Отправить ответ', open_map: 'Открыть в 2GIS', splash_btn: 'Открыть приглашение',
+    btn_save: 'Отправить ответ', open_map: 'Открыть в 2GIS', open_gmap: 'Google Maps', splash_btn: 'Открыть приглашение',
     rsvp_opts: ['Я приду', 'Не смогу', 'Думаю'],
     success_saved: 'Ответ сохранён! Спасибо!', err_fields: 'Пожалуйста, заполните имя.',
     name: 'Имя и Фамилия',
   },
   en: {
+    names: 'Beibarys & Malika',
     header: 'Wedding Invitation', date_str: 'August 08, 2026',
     days: 'Days', hours: 'Hours', mins: 'Minutes', secs: 'Seconds',
     invite_title: 'Dear Guests,',
-    invite_body: 'Dear family, relatives, brothers and sisters, neighbours, friends and colleagues!\n\nWe warmly invite you to join us as honoured guests at the wedding celebration of Beibarys and Malika!',
+    invite_body: 'Dear family, relatives, friends and colleagues!\n\nWe warmly invite you to join us as honoured guests at the wedding celebration of Beibarys and Malika!',
     invite_closing: 'Your presence is the greatest gift. Please share in our joy!',
     quote: '"Two souls who found each other — the foundation of a happy family."',
     menu_prog: 'Program', menu_map: 'Venue', menu_rsvp: 'RSVP',
@@ -522,7 +543,7 @@ const T = {
     prog_1: 'Guest Arrival', prog_2: 'Start of Celebration', prog_3: 'Closing',
     rsvp_q: 'Will you attend?', rsvp_attendance: 'Your response', rsvp_food: 'Allergies / Preferences',
     guests_count_label: 'Number of guests',
-    btn_save: 'Submit', open_map: 'Open in 2GIS', splash_btn: 'Open Invitation',
+    btn_save: 'Submit', open_map: 'Open in 2GIS', open_gmap: 'Google Maps', splash_btn: 'Open Invitation',
     rsvp_opts: ['I will attend', 'Cannot attend', 'Still thinking'],
     success_saved: 'Response saved! Thank you!', err_fields: 'Please enter your name.',
     name: 'Full Name',
@@ -633,6 +654,7 @@ function setLang(l) {
   // Re-render transport tabs with translated link text preserved
   renderTransportTabs(l);
   document.getElementById('splash-btn-text').textContent = T[l].splash_btn;
+  document.title = T[l].names + ' — 08.08.2026';
   refreshRSVPSelect();
 }
 

@@ -24,7 +24,9 @@ async def global_exception_handler(_request: Request, exc: Exception):
 
 
 pathlib.Path("static").mkdir(exist_ok=True)
+pathlib.Path("images").mkdir(exist_ok=True)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/images", StaticFiles(directory="images"), name="images")
 
 templates = Jinja2Templates(directory="templates")
 
